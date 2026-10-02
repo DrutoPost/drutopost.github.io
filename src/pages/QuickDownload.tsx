@@ -111,7 +111,7 @@ const QuickDownload: React.FC<QuickDownloadProps> = ({ contentId }) => {
       <div className="w-full max-w-md space-y-8 bg-card/50 backdrop-blur-xl p-8 rounded-3xl border border-border shadow-2xl text-center">
         <div className="flex flex-col items-center space-y-6">
           <div className="p-4 bg-black rounded-2xl flex items-center justify-center">
-            <span className="text-white text-2xl font-bold font-sans tracking-tight">DrutoPost</span>
+            <img src="/whitelogo.png" alt="Drutopost" className="h-10 w-auto object-contain" />
           </div>
 
           <div className="space-y-4">

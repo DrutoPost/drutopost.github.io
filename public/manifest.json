@@ -1,7 +1,7 @@
 {
-  "name": "Daily Bangladesh PhotoCard Automation",
-  "short_name": "Daily Bangladesh",
-  "description": "A web based Application that uses Daily Bangladesh's internal API to fetch Latest news posts and generate Photocards automatically.",
+  "name": "Drutopost - Newsroom Photocard Automation.",
+  "short_name": "Drutopost",
+  "description": "A Create your news photocards with our automation software. Lightning speed.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
