@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 0 72% 51%;
+
+    --radius: 0.75rem;
+
+    --surface-1: 0 0% 98%;
+    --surface-2: 0 0% 96%;
+    --surface-3: 0 0% 94%;
+  }
+
+  .dark {
+    --background: 240 10% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 3.7% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 18%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 18%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 20%;
+    --input: 240 3.7% 20%;
+    --ring: 0 72% 51%;
+
+    --surface-1: 240 10% 13%;
+    --surface-2: 240 10% 15%;
+    --surface-3: 240 10% 17%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Google Sans', 'Manrope', sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "GRAD" 0;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white font-bold transition-all active:scale-95 disabled:opacity-50;
+  }
+
+  .card-flat {
+    @apply bg-card border border-border transition-all;
+  }
+
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Re-adding font declarations needed for generator canvas to load them */
+@font-face {
+  font-family: 'Cambria';
+  src: url('/fonts/Cambria.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Color Picker Revamp */
+.custom-color-picker .react-colorful {
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  border: 1px solid hsl(var(--border));
+  cursor: crosshair;
+}
+.custom-color-picker .react-colorful__saturation {
+  border-radius: 16px 16px 0 0;
+  border-bottom: none;
+}
+.custom-color-picker .react-colorful__alpha,
+.custom-color-picker .react-colorful__hue {
+  height: 14px;
+  border-radius: 10px;
+  margin: 12px 12px 0 12px;
+}
+.custom-color-picker .react-colorful__alpha {
+  margin-bottom: 12px;
+}
+.custom-color-picker .react-colorful__last-control {
+  border-radius: 0 0 16px 16px;
+}
+.custom-color-picker .react-colorful__pointer {
+  width: 20px;
+  height: 20px;
+  border: 3px solid white;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), shadow-lg;
+}
+
+@font-face {
+  font-family: 'Cambria';
+  src: url('/fonts/cambriab.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
