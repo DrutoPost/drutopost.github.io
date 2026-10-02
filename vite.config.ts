@@ -18,14 +18,23 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     {
-      name: '404-fallback',
+      name: 'router-fallback',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           const url = req.url?.split('?')[0] || '';
-          if (url === '/robots.txt') {
-            res.writeHead(302, { Location: 'https://m.youtube.com/watch?v=dQw4w9WgXcQ' });
-            res.end();
-          } else if (url === '/' || url === '/index.html' || url === '/404.html' || url.includes('.') || url.startsWith('/@') || url.startsWith('/src') || url.startsWith('/node_modules') || /^\/\d+$/.test(url)) {
+          if (url === '/demo' || url === '/demo/') {
+            req.url = '/demo/index.html';
+            next();
+          } else if (
+            url === '/' ||
+            url === '/index.html' ||
+            url === '/demo/index.html' ||
+            url === '/404.html' ||
+            url.includes('.') ||
+            url.startsWith('/@') ||
+            url.startsWith('/src') ||
+            url.startsWith('/node_modules')
+          ) {
             next();
           } else {
             req.url = '/404.html';
@@ -44,6 +53,7 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
+        demo: path.resolve(__dirname, "demo/index.html"),
         "404": path.resolve(__dirname, "404.html"),
       },
     },
