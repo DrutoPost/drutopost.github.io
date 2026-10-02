@@ -1,29 +1,24 @@
-const CACHE_NAME = 'bg-photocard-v3';
-const ASSETS = [
+const CACHE_NAME = 'bg-photocard-v4';
+const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/404.html',
-  '/Logoicon.svg',
+  '/manifest.json',
+  '/fav.png',
   '/icon-192.png',
   '/icon-512.png',
-  '/logo.png',
-  '/PhotocardTemplate.png',
-  '/PhotocardTemplate1.png',
+  '/whitelogo.png',
+  '/darklogo.png',
   '/Template BG 2.jpg',
   '/Template Fg.png',
-  '/Def.png',
   '/Alert.mp3',
-  '/Instant.mp3',
   '/Loud.mp3',
-  '/manifest.json',
-  '/fonts/Cambria.ttf',
-  '/fonts/cambriab.ttf'
+  '/Instant.mp3'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
 });
@@ -40,10 +35,10 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.filter((cacheName) => {
-          return cacheName.startsWith('bg-photocard-') && cacheName !== CACHE_NAME;
-        }).map((cacheName) => {
-          return caches.delete(cacheName);
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
         })
       );
     })
