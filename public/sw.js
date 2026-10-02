@@ -7,7 +7,7 @@ const ASSETS = [
   '/icon-192.png',
   '/icon-512.png',
   '/logo.png',
-  '/whitelogo.png',
+  '/darklogo.png',
   '/Template BG 2.jpg',
   '/Template Fg.png',
   '/Def.png',
