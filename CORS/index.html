@@ -48,30 +48,58 @@
         e.preventDefault();
       }
     });
-
-    // Copy Lock
-    document.addEventListener("copy", (e) => {
-      e.clipboardData.setData("text/plain", "Copying text is restricted.");
-      e.preventDefault();
-    });
   </script>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
-    h1 { text-align: center; color: #333; }
     .controls { text-align: center; margin-bottom: 20px; }
     button { padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
     button:hover { background: #0b7dda; }
     .test-list { max-width: 700px; margin: 0 auto; }
-    .result { padding: 12px; margin: 10px 0; border-left: 4px solid; border-radius: 3px; }
-    .allowed { background: #e8f5e9; border-color: #4caf50; }
-    .blocked { background: #ffebee; border-color: #f44336; }
-    .testing { background: #fff3e0; border-color: #ff9800; }
-    .status { font-weight: bold; }
-    .url { font-size: 12px; color: #666; margin-top: 5px; }
+    .result {
+      padding: 14px;
+      margin: 12px 0;
+      border-left: 5px solid #ccc;
+      border-radius: 4px;
+      background: #fdfdfd;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .result.allowed { border-color: #4caf50; background: #f1f8e9; }
+    .result.blocked { border-color: #f44336; background: #ffebee; }
+    .result.testing { border-color: #ff9800; background: #fff3e0; }
+    .source-title { font-weight: bold; font-size: 16px; color: #222; }
+    .url { font-size: 12px; color: #666; margin-top: 2px; margin-bottom: 10px; }
+    .check-section { margin-top: 8px; padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 13px; }
+    .check-label { font-weight: 600; display: inline-block; width: 110px; color: #444; }
+    .badge-success { color: #2e7d32; font-weight: bold; }
+    .badge-danger { color: #c62828; font-weight: bold; }
+    .badge-testing { color: #ef6c00; font-weight: bold; }
+    .expand-btn {
+      padding: 3px 8px;
+      font-size: 11px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .expand-btn:hover { background: #388E3C; }
+    .expand-details {
+      margin-top: 6px;
+      padding: 8px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .expand-details ul { margin: 0; padding-left: 18px; }
+    .expand-details li { margin-bottom: 3px; }
   </style>
 </head>
 <body>
-  <h1>🇧🇩 Drutopost BD News CORS Tester</h1>
   <div class="controls">
     <button onclick="testAllSources()">Test All</button>
     <button onclick="clearResults()">Clear</button>
@@ -1998,6 +2026,62 @@
     }
 ];
 
+    const sitemapPaths = [
+      "/news-sitemap.xml",
+      "/post-sitemap.xml",
+      "/sitemap.xml",
+      "/sitemap_index.xml",
+      "/sitemap-index.xml",
+      "/posts-sitemap.xml",
+      "/page-sitemap.xml",
+      "/category-sitemap.xml",
+      "/sitemaps.xml",
+      "/sitemap.php",
+      "/sitemap1.xml",
+      "/rss.xml",
+      "/feed/sitemap"
+    ];
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function toggleExpand(id) {
+      const el = document.getElementById(id);
+      const btn = document.getElementById(`btn-${id}`);
+      if (el) {
+        if (el.style.display === "none" || !el.style.display) {
+          el.style.display = "block";
+          if (btn) btn.textContent = btn.textContent.replace("Expand", "Collapse");
+        } else {
+          el.style.display = "none";
+          if (btn) btn.textContent = btn.textContent.replace("Collapse", "Expand");
+        }
+      }
+    }
+
+    function updateSourceCardState(index, checkResults) {
+      const cardEl = document.getElementById(`result-${index}`);
+      if (!cardEl) return;
+
+      const hasPass = Object.values(checkResults).some(val => val === 'allowed');
+      const allDone = Object.values(checkResults).every(val => val !== 'testing');
+
+      if (hasPass) {
+        cardEl.className = "result allowed";
+      } else if (allDone) {
+        cardEl.className = "result blocked";
+      } else {
+        cardEl.className = "result testing";
+      }
+      sortResults();
+    }
+
     function sortResults() {
       const resultsDiv = document.getElementById("results");
       const children = Array.from(resultsDiv.children);
@@ -2013,11 +2097,9 @@
       children.forEach((child) => resultsDiv.appendChild(child));
     }
 
-    async function testCORS(source, index) {
-      const resultEl = document.getElementById(`result-${index}`);
-      if (!resultEl) return;
-      resultEl.className = "result testing";
-      resultEl.innerHTML = `<span class="status">${source.name}:</span> Testing...`;
+    async function checkCORS(source, index, checkResults) {
+      const corsEl = document.getElementById(`check-cors-${index}`);
+      if (!corsEl) return;
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -2028,17 +2110,286 @@
           mode: "cors",
           signal: controller.signal,
         });
-
         clearTimeout(timeoutId);
-        resultEl.className = "result allowed";
-        resultEl.innerHTML = `<span class="status">${source.name}:</span> ✓ CORS Allowed (${response.status})<div class="url">${source.url}</div>`;
+        checkResults.cors = "allowed";
+        corsEl.innerHTML = `<span class="check-label">CORS:</span> <span class="badge-success">✓ Allowed (${response.status})</span>`;
       } catch (error) {
         clearTimeout(timeoutId);
-        resultEl.className = "result blocked";
-        resultEl.innerHTML = `<span class="status">${source.name}:</span> ✗ CORS Blocked<div class="url">${source.url}</div>`;
+        checkResults.cors = "blocked";
+        corsEl.innerHTML = `<span class="check-label">CORS:</span> <span class="badge-danger">✗ Blocked</span>`;
       } finally {
-        sortResults();
+        updateSourceCardState(index, checkResults);
       }
+    }
+
+    function parseRSSTitles(xmlString) {
+      const titles = [];
+      try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        const itemTitles = xmlDoc.querySelectorAll("item > title, entry > title");
+        itemTitles.forEach(node => {
+          const txt = node.textContent.trim();
+          if (txt) titles.push(txt);
+        });
+      } catch (e) {}
+
+      if (titles.length === 0) {
+        const matches = xmlString.match(/<title>(.*?)<\/title>/gi);
+        if (matches) {
+          matches.forEach(m => {
+            let clean = m.replace(/<\/?title>/gi, '').trim();
+            clean = clean.replace(/<!\[CDATA\[/gi, '').replace(/\]\]>/gi, '').trim();
+            if (clean) titles.push(clean);
+          });
+        }
+      }
+      return [...new Set(titles)];
+    }
+
+    async function checkRSS(source, index, checkResults) {
+      const rssEl = document.getElementById(`check-rss-${index}`);
+      if (!rssEl) return;
+
+      const feedUrl = source.url.replace(/\/+$/, '') + '/feed/';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+      try {
+        const response = await fetch(feedUrl, {
+          method: "GET",
+          mode: "cors",
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const text = await response.text();
+        const titles = parseRSSTitles(text);
+
+        checkResults.rss = "allowed";
+        const detailsId = `rss-details-${index}`;
+        const btnId = `btn-${detailsId}`;
+
+        let detailsHtml = '';
+        if (titles.length > 0) {
+          detailsHtml = `
+            <button id="${btnId}" class="expand-btn" onclick="toggleExpand('${detailsId}')">Expand (${titles.length})</button>
+            <div id="${detailsId}" class="expand-details" style="display:none;">
+              <ul>
+                ${titles.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        rssEl.innerHTML = `<span class="check-label">RSS Feed:</span> <span class="badge-success">✓ Available (${titles.length} titles captured)</span> ${detailsHtml}`;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        checkResults.rss = "blocked";
+        rssEl.innerHTML = `<span class="check-label">RSS Feed:</span> <span class="badge-danger">✗ Blocked / Unavailable</span>`;
+      } finally {
+        updateSourceCardState(index, checkResults);
+      }
+    }
+
+    function parseRobotsUrls(robotsText, baseUrl) {
+      const urls = [];
+      const lines = robotsText.split(/\r?\n/);
+
+      for (let line of lines) {
+        const hashIdx = line.indexOf('#');
+        if (hashIdx !== -1) {
+          line = line.substring(0, hashIdx);
+        }
+        line = line.trim();
+        if (!line) continue;
+
+        let val = line;
+        const colonIdx = line.indexOf(':');
+        if (colonIdx !== -1) {
+          val = line.substring(colonIdx + 1).trim();
+        }
+
+        if (!val || val === '*' || val === '$') continue;
+
+        try {
+          let fullUrl = '';
+          if (val.startsWith('http://') || val.startsWith('https://')) {
+            fullUrl = new URL(val).href;
+          } else if (val.startsWith('/')) {
+            const cleanPath = val.replace(/[\*\$].*$/, '');
+            if (cleanPath) {
+              fullUrl = new URL(cleanPath, baseUrl).href;
+            }
+          }
+
+          if (fullUrl) {
+            const parsed = new URL(fullUrl);
+            if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+              urls.push(parsed.href);
+            }
+          }
+        } catch (e) {}
+      }
+
+      return [...new Set(urls)];
+    }
+
+    async function checkRobots(source, index, checkResults) {
+      const robotsEl = document.getElementById(`check-robots-${index}`);
+      if (!robotsEl) return;
+
+      const robotsUrl = source.url.replace(/\/+$/, '') + '/robots.txt';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+      try {
+        const response = await fetch(robotsUrl, {
+          method: "GET",
+          mode: "cors",
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const text = await response.text();
+        const urls = parseRobotsUrls(text, source.url);
+
+        checkResults.robots = "allowed";
+        const detailsId = `robots-details-${index}`;
+        const btnId = `btn-${detailsId}`;
+
+        let detailsHtml = '';
+        if (urls.length > 0) {
+          detailsHtml = `
+            <button id="${btnId}" class="expand-btn" onclick="toggleExpand('${detailsId}')">Expand (${urls.length})</button>
+            <div id="${detailsId}" class="expand-details" style="display:none;">
+              <ul>
+                ${urls.map(u => `<li><a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a></li>`).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        robotsEl.innerHTML = `<span class="check-label">Robots.txt:</span> <span class="badge-success">✓ Available (${urls.length} URLs captured)</span> ${detailsHtml}`;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        checkResults.robots = "blocked";
+        robotsEl.innerHTML = `<span class="check-label">Robots.txt:</span> <span class="badge-danger">✗ Blocked / Unavailable</span>`;
+      } finally {
+        updateSourceCardState(index, checkResults);
+      }
+    }
+
+    function parseXMLSitemapUrls(xmlString, baseUrl) {
+      const urls = [];
+      try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        const locNodes = xmlDoc.querySelectorAll("loc");
+        locNodes.forEach(node => {
+          const val = node.textContent.trim();
+          if (val) {
+            try {
+              const parsed = new URL(val.startsWith('http') ? val : new URL(val, baseUrl).href);
+              if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                urls.push(parsed.href);
+              }
+            } catch (e) {}
+          }
+        });
+      } catch (e) {}
+
+      if (urls.length === 0) {
+        const matches = xmlString.match(/<loc>(.*?)<\/loc>/gi);
+        if (matches) {
+          matches.forEach(m => {
+            const val = m.replace(/<\/?loc>/gi, '').trim();
+            if (val) {
+              try {
+                const parsed = new URL(val.startsWith('http') ? val : new URL(val, baseUrl).href);
+                if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                  urls.push(parsed.href);
+                }
+              } catch (e) {}
+            }
+          });
+        }
+      }
+
+      return [...new Set(urls)];
+    }
+
+    async function checkXML(source, index, checkResults) {
+      const xmlEl = document.getElementById(`check-xml-${index}`);
+      if (!xmlEl) return;
+
+      const baseUrl = source.url.replace(/\/+$/, '');
+      let foundUrls = [];
+
+      for (const path of sitemapPaths) {
+        const candidateUrl = baseUrl + path;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        try {
+          const response = await fetch(candidateUrl, {
+            method: "GET",
+            mode: "cors",
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const text = await response.text();
+            const urls = parseXMLSitemapUrls(text, source.url);
+            if (urls.length > 0) {
+              foundUrls = urls;
+              break;
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId);
+        }
+      }
+
+      if (foundUrls.length > 0) {
+        checkResults.xml = "allowed";
+        const detailsId = `xml-details-${index}`;
+        const btnId = `btn-${detailsId}`;
+
+        const detailsHtml = `
+          <button id="${btnId}" class="expand-btn" onclick="toggleExpand('${detailsId}')">Expand (${foundUrls.length})</button>
+          <div id="${detailsId}" class="expand-details" style="display:none;">
+            <ul>
+              ${foundUrls.map(u => `<li><a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a></li>`).join('')}
+            </ul>
+          </div>
+        `;
+
+        xmlEl.innerHTML = `<span class="check-label">XML Sitemap:</span> <span class="badge-success">✓ Found (${foundUrls.length} URLs captured)</span> ${detailsHtml}`;
+      } else {
+        checkResults.xml = "blocked";
+        xmlEl.innerHTML = `<span class="check-label">XML Sitemap:</span> <span class="badge-danger">✗ Blocked / Not Found</span>`;
+      }
+      updateSourceCardState(index, checkResults);
+    }
+
+    function runAllChecksForSource(source, index) {
+      const checkResults = {
+        cors: 'testing',
+        rss: 'testing',
+        robots: 'testing',
+        xml: 'testing'
+      };
+
+      checkCORS(source, index, checkResults);
+      checkRSS(source, index, checkResults);
+      checkRobots(source, index, checkResults);
+      checkXML(source, index, checkResults);
     }
 
     function testAllSources() {
@@ -2048,9 +2399,26 @@
       newsSources.forEach((source, index) => {
         const div = document.createElement("div");
         div.id = `result-${index}`;
-        div.className = "result";
+        div.className = "result testing";
+        div.innerHTML = `
+          <div class="source-title">${source.name}</div>
+          <div class="url">${source.url}</div>
+          <div class="check-section" id="check-cors-${index}">
+            <span class="check-label">CORS:</span> <span class="badge-testing">Testing...</span>
+          </div>
+          <div class="check-section" id="check-rss-${index}">
+            <span class="check-label">RSS Feed:</span> <span class="badge-testing">Testing...</span>
+          </div>
+          <div class="check-section" id="check-robots-${index}">
+            <span class="check-label">Robots.txt:</span> <span class="badge-testing">Testing...</span>
+          </div>
+          <div class="check-section" id="check-xml-${index}">
+            <span class="check-label">XML Sitemap:</span> <span class="badge-testing">Testing...</span>
+          </div>
+        `;
         resultsDiv.appendChild(div);
-        testCORS(source, index);
+
+        runAllChecksForSource(source, index);
       });
     }
 
