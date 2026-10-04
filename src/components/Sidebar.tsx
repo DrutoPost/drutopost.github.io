@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { Home, Image as ImageIcon, Layout, Settings2, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
+import { getScopedItem } from "@/lib/scopedStorage";
 
 export type PageId = 'home' | 'templates' | 'ads' | 'settings';
 
@@ -13,11 +14,11 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [automationStatus, setAutomationStatus] = useState(() => localStorage.getItem('bg_automation_status') || 'IDLE');
+  const [automationStatus, setAutomationStatus] = useState(() => getScopedItem('bg_automation_status') || 'IDLE');
 
   useEffect(() => {
     const handleStorage = () => {
-      setAutomationStatus(localStorage.getItem('bg_automation_status') || 'IDLE');
+      setAutomationStatus(getScopedItem('bg_automation_status') || 'IDLE');
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);

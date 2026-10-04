@@ -7,6 +7,8 @@ import Templates from "./Templates";
 import Ads from "./Ads";
 import Settings from "./Settings";
 import QuickDownload from "./QuickDownload";
+import { initializeSmartVersioning } from "@/lib/smartVersioning";
+import { getScopedItem } from "@/lib/scopedStorage";
 
 const Secret = () => {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
@@ -28,8 +30,10 @@ const Secret = () => {
   const isQuickDownload = !!quickId;
 
   useEffect(() => {
+    initializeSmartVersioning().catch(console.error);
+
     const updateTheme = () => {
-      const theme = localStorage.getItem('bg_theme') || 'day';
+      const theme = getScopedItem('bg_theme') || 'day';
       if (theme === 'night') {
         document.documentElement.classList.add('dark');
       } else {

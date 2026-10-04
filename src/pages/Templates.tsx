@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { getScopedItem, setScopedItem } from "@/lib/scopedStorage";
 
 const templates = [
   { id: 'default', name: 'Basic (Default)', file: 'Template BG 2.jpg', preview: '/Def.png' },
@@ -9,12 +10,12 @@ const templates = [
 
 const Templates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(() => {
-    return localStorage.getItem('bg_selected_template') || 'Template BG 2.jpg';
+    return getScopedItem('bg_selected_template') || 'Template BG 2.jpg';
   });
 
   const handleSelect = (file: string) => {
     setSelectedTemplate(file);
-    localStorage.setItem('bg_selected_template', file);
+    setScopedItem('bg_selected_template', file);
     window.dispatchEvent(new Event('storage'));
     toast.success("Template updated");
   };
