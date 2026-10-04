@@ -5,6 +5,7 @@ import { censorText } from '@/lib/censor';
 import { loadTypographySettings } from '@/lib/settings';
 import { generatePhotoCardInternal, CANVAS_WIDTH, CANVAS_HEIGHT } from '@/lib/renderer';
 import { BGArchiveItem, BG_API_ARCHIVE_URL } from '@/lib/api';
+import { getScopedItem } from '@/lib/scopedStorage';
 
 interface QuickDownloadProps {
   contentId: string;
@@ -59,7 +60,7 @@ const QuickDownload: React.FC<QuickDownloadProps> = ({ contentId }) => {
         setStatus('processing');
         const settings = loadTypographySettings();
 
-        const sw = localStorage.getItem('bg_secret_word_restrictions');
+        const sw = getScopedItem('bg_secret_word_restrictions');
         const wordRestrictions = sw ? JSON.parse(sw) : {};
         const censoredTitle = censorText(title, wordRestrictions);
 
@@ -95,10 +96,11 @@ const QuickDownload: React.FC<QuickDownloadProps> = ({ contentId }) => {
           }
         }, 1500);
 
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Quick Download Error:", err);
         setStatus('error');
-        setErrorMsg(err.message || "An unexpected error occurred.");
+        const msg = err instanceof Error ? err.message : "An unexpected error occurred.";
+        setErrorMsg(msg);
         toast.error("Failed to process Quick Download");
       }
     };

@@ -1,3 +1,5 @@
+import { getScopedItem } from './scopedStorage';
+
 export interface TypographySettings {
   fontSize: number;
   dateXOffset: number;
@@ -13,18 +15,18 @@ export interface TypographySettings {
 }
 
 export const loadTypographySettings = (): TypographySettings => {
-  const template = localStorage.getItem('bg_selected_template') || 'Template BG 2.jpg';
+  const template = getScopedItem('bg_selected_template') || 'Template BG 2.jpg';
   const suffix = (template === 'Template BG 2.jpg' || template === 'PhotocardTemplate.png') ? '' : `_${template}`;
 
-  const getVal = (key: string, def: any) => {
-    const saved = localStorage.getItem(`bg_${key}${suffix}`);
-    return saved !== null ? saved : (localStorage.getItem(`bg_${key}`) || def);
+  const getVal = (key: string, def: number | string | boolean) => {
+    const saved = getScopedItem(`bg_${key}${suffix}`);
+    return saved !== null ? saved : (getScopedItem(`bg_${key}`) || def);
   };
 
   const getDVal = (key: string, def: number | string) => {
-    const saved = localStorage.getItem(`bg_${key}${suffix}`);
+    const saved = getScopedItem(`bg_${key}${suffix}`);
     if (saved !== null) return saved;
-    return localStorage.getItem(`bg_${key}`) || def;
+    return getScopedItem(`bg_${key}`) || def;
   };
 
   const defaultLayerOrder = 'background,news_image,foreground,date_time,title_text';

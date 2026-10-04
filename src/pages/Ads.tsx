@@ -5,33 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-interface AdImage {
-  id: string;
-  name: string;
-  data: string;
-}
-
-const DB_NAME = 'AdImagesDB';
-const STORE_NAME = 'ads';
-
-const initDB = (): Promise<IDBDatabase> => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
+import { getAllAdsDB, saveAdDB, deleteAdDB, AdData } from "@/lib/db";
+import { getScopedItem, setScopedItem, removeScopedItem } from "@/lib/scopedStorage";
 
 const Ads = () => {
-  const [ads, setAds] = useState<AdImage[]>([]);
-  const [selectedAdId, setSelectedAdId] = useState(() => localStorage.getItem('bg_selected_ad') || '');
+  const [ads, setAds] = useState<AdData[]>([]);
+  const [selectedAdId, setSelectedAdId] = useState(() => getScopedItem('bg_selected_ad') || '');
   const [newAdName, setNewAdName] = useState('');
   const [previewData, setPreviewData] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,11 +20,8 @@ const Ads = () => {
   }, []);
 
   const loadAds = async () => {
-    const db = await initDB();
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.getAll();
-    request.onsuccess = () => setAds(request.result);
+    const list = await getAllAdsDB();
+    setAds(list);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,37 +43,29 @@ const Ads = () => {
 
     const newAd = { id: Math.random().toString(36).substr(2, 9), name: newAdName, data: previewData };
 
-    const db = await initDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    tx.objectStore(STORE_NAME).add(newAd);
-    tx.oncomplete = () => {
-      setAds([...ads, newAd]);
-      setNewAdName('');
-      setPreviewData(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      toast.success("Ad campaign added");
-    };
+    await saveAdDB(newAd);
+    setAds([...ads, newAd]);
+    setNewAdName('');
+    setPreviewData(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    toast.success("Ad campaign added");
   };
 
   const deleteAd = async (id: string) => {
-    const db = await initDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    tx.objectStore(STORE_NAME).delete(id);
-    tx.oncomplete = () => {
-      setAds(ads.filter(a => a.id !== id));
-      if (selectedAdId === id) {
-        setSelectedAdId('');
-        localStorage.removeItem('bg_selected_ad');
-      }
-      toast.success("Ad deleted");
-    };
+    await deleteAdDB(id);
+    setAds(ads.filter(a => a.id !== id));
+    if (selectedAdId === id) {
+      setSelectedAdId('');
+      removeScopedItem('bg_selected_ad');
+    }
+    toast.success("Ad deleted");
   };
 
   const toggleSelect = (id: string) => {
     const newVal = selectedAdId === id ? '' : id;
     setSelectedAdId(newVal);
-    if (newVal) localStorage.setItem('bg_selected_ad', newVal);
-    else localStorage.removeItem('bg_selected_ad');
+    if (newVal) setScopedItem('bg_selected_ad', newVal);
+    else removeScopedItem('bg_selected_ad');
     window.dispatchEvent(new Event('storage'));
     toast.success(newVal ? "Ad applied" : "Ad removed");
   };

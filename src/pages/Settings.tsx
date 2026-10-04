@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { defaultMappings } from "@/lib/censor";
+import { getScopedItem, setScopedItem } from "@/lib/scopedStorage";
 
 const FREQ_OPTIONS = [
   { id: '1m3p', label: '1 Minute 3 Posts' },
@@ -15,20 +16,20 @@ const FREQ_OPTIONS = [
 ];
 
 const Settings = () => {
-  const [selectedAudio, setSelectedAudio] = useState(localStorage.getItem('bg_secret_audio') || '/Alert.mp3');
-  const [automationMode, setAutomationMode] = useState(localStorage.getItem('bg_secret_automation_mode') || 'main');
-  const [automationFrequency, setAutomationFrequency] = useState(localStorage.getItem('bg_secret_automation_frequency') || '1m3p');
-  const [livePreview, setLivePreview] = useState(localStorage.getItem('bg_live_preview') === 'true');
-  const [theme, setTheme] = useState(localStorage.getItem('bg_theme') || 'day');
-  const [highlightColor, setHighlightColor] = useState(localStorage.getItem('bg_highlight_color') || '#FFFF00');
-  const [autoHighlight, setAutoHighlight] = useState(localStorage.getItem('bg_auto_highlight_two_lines') !== 'false');
+  const [selectedAudio, setSelectedAudio] = useState(getScopedItem('bg_secret_audio') || '/Alert.mp3');
+  const [automationMode, setAutomationMode] = useState(getScopedItem('bg_secret_automation_mode') || 'main');
+  const [automationFrequency, setAutomationFrequency] = useState(getScopedItem('bg_secret_automation_frequency') || '1m3p');
+  const [livePreview, setLivePreview] = useState(getScopedItem('bg_live_preview') === 'true');
+  const [theme, setTheme] = useState(getScopedItem('bg_theme') || 'day');
+  const [highlightColor, setHighlightColor] = useState(getScopedItem('bg_highlight_color') || '#FFFF00');
+  const [autoHighlight, setAutoHighlight] = useState(getScopedItem('bg_auto_highlight_two_lines') !== 'false');
   const [expandedTile, setExpandedTile] = useState<string | null>(null);
 
-  const [currentTemplate, setCurrentTemplate] = useState(() => localStorage.getItem('bg_selected_template') || 'Template BG 2.jpg');
+  const [currentTemplate, setCurrentTemplate] = useState(() => getScopedItem('bg_selected_template') || 'Template BG 2.jpg');
 
   // Word Restrictions
   const [wordRestrictions, setWordRestrictions] = useState<Record<string, string>>(() => {
-    const saved = localStorage.getItem('bg_secret_word_restrictions');
+    const saved = getScopedItem('bg_secret_word_restrictions');
     return saved ? JSON.parse(saved) : defaultMappings;
   });
   const [newWord, setNewWord] = useState('');
@@ -51,14 +52,14 @@ const Settings = () => {
     const suffix = (template === 'Template BG 2.jpg' || template === 'PhotocardTemplate.png') ? '' : `_${template}`;
 
     const getVal = (key: string, def: number | string) => {
-      const saved = localStorage.getItem(`bg_${key}${suffix}`);
-      return saved !== null ? saved : (localStorage.getItem(`bg_${key}`) || def);
+      const saved = getScopedItem(`bg_${key}${suffix}`);
+      return saved !== null ? saved : (getScopedItem(`bg_${key}`) || def);
     };
 
     const getDVal = (key: string, def: number | string) => {
-      const saved = localStorage.getItem(`bg_${key}${suffix}`);
+      const saved = getScopedItem(`bg_${key}${suffix}`);
       if (saved !== null) return saved;
-      return localStorage.getItem(`bg_${key}`) || def;
+      return getScopedItem(`bg_${key}`) || def;
     };
 
     setFontSize(Number(getDVal('font_size', 110)));
@@ -83,7 +84,7 @@ const Settings = () => {
 
   useEffect(() => {
     const handleStorage = () => {
-      const template = localStorage.getItem('bg_selected_template') || 'Template BG 2.jpg';
+      const template = getScopedItem('bg_selected_template') || 'Template BG 2.jpg';
       if (template !== currentTemplate) setCurrentTemplate(template);
     };
     window.addEventListener('storage', handleStorage);
@@ -91,7 +92,7 @@ const Settings = () => {
   }, [currentTemplate]);
 
   useEffect(() => {
-    localStorage.setItem('bg_secret_word_restrictions', JSON.stringify(wordRestrictions));
+    setScopedItem('bg_secret_word_restrictions', JSON.stringify(wordRestrictions));
     window.dispatchEvent(new Event('storage'));
   }, [wordRestrictions]);
 
@@ -103,9 +104,9 @@ const Settings = () => {
     ].includes(key);
 
     if (isTypoSetting && currentTemplate !== 'Template BG 2.jpg' && currentTemplate !== 'PhotocardTemplate.png') {
-      localStorage.setItem(`${key}_${currentTemplate}`, String(value));
+      setScopedItem(`${key}_${currentTemplate}`, String(value));
     } else {
-      localStorage.setItem(key, String(value));
+      setScopedItem(key, String(value));
     }
     window.dispatchEvent(new Event('storage'));
   };

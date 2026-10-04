@@ -1,6 +1,7 @@
 import { TypographySettings } from "./settings";
 import { getSelectedAd } from "./db";
 import { fetchImageWithProxy } from "./api";
+import { getScopedItem } from "./scopedStorage";
 
 export const CANVAS_WIDTH = 2048;
 export const CANVAS_HEIGHT = 2048;
@@ -43,7 +44,7 @@ export const generatePhotoCardInternal = async (
 ): Promise<{ dataUrl: string, appliedHighlights: number[] }> => {
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   let appliedHighlightsResult: number[] = [];
-  const selectedTemplate = localStorage.getItem('bg_selected_template') || 'Template BG 2.jpg';
+  const selectedTemplate = getScopedItem('bg_selected_template') || 'Template BG 2.jpg';
 
   const getCachedImage = async (src: string, isData = false): Promise<HTMLImageElement> => {
     if (imageCache.has(src)) return imageCache.get(src)!;
@@ -59,7 +60,7 @@ export const generatePhotoCardInternal = async (
   };
 
   let bgTemplateName = 'Template BG 2.jpg';
-  let fgTemplateName = 'Template Fg.png';
+  const fgTemplateName = 'Template Fg.png';
 
   if (selectedTemplate !== 'PhotocardTemplate.png' && selectedTemplate !== 'Template BG 2.jpg' && selectedTemplate !== 'default') {
     bgTemplateName = selectedTemplate;
@@ -69,7 +70,7 @@ export const generatePhotoCardInternal = async (
   const fgTemplate = await getCachedImage(`/${fgTemplateName}`);
 
   let adImg: HTMLImageElement | null = null;
-  const selectedAdId = localStorage.getItem('bg_selected_ad');
+  const selectedAdId = getScopedItem('bg_selected_ad');
   if (selectedAdId) {
     const adData = await getSelectedAd(selectedAdId);
     if (adData) {
@@ -130,7 +131,7 @@ export const generatePhotoCardInternal = async (
     },
     title_text: () => {
       renderFg();
-      const highlightColor = localStorage.getItem('bg_highlight_color') || '#FFFF00';
+      const highlightColor = getScopedItem('bg_highlight_color') || '#FFFF00';
       let curFS = settings.fontSize;
       ctx.textAlign = 'center';
       if ('letterSpacing' in ctx) {
@@ -166,7 +167,7 @@ export const generatePhotoCardInternal = async (
 
       const lh = curFS * settings.lineHeightFactor;
       let appliedHighlights = manualHighlights;
-      const autoHighlightEnabled = localStorage.getItem('bg_auto_highlight_two_lines') !== 'false';
+      const autoHighlightEnabled = getScopedItem('bg_auto_highlight_two_lines') !== 'false';
 
       if (!appliedHighlights && lines.length === 2 && autoHighlightEnabled) {
         appliedHighlights = lines[0].wordIndices;

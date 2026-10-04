@@ -21,6 +21,12 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Update version.json
+        run: |
+          VERSION_STR=$(date -u +'%Y.%m.%d.%H.%M')
+          echo "{\"version\": \"$VERSION_STR\"}" > public/version.json
+          echo "{\"version\": \"$VERSION_STR\"}" > version.json
+
       - name: Build
         run: npm run build
 

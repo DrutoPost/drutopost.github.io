@@ -28,6 +28,7 @@ import {
 } from "@/lib/api";
 import { loadTypographySettings, TypographySettings } from "@/lib/settings";
 import { generatePhotoCardInternal, CANVAS_WIDTH, CANVAS_HEIGHT } from "@/lib/renderer";
+import { getScopedItem, setScopedItem } from "@/lib/scopedStorage";
 
 interface LogEntry {
   message: string;
@@ -105,15 +106,15 @@ const Home = () => {
 
   useEffect(() => {
     const loadSettings = (e?: StorageEvent) => {
-      if (e && e.key === 'bg_automation_status') return; // Ignore status updates
-      const sw = localStorage.getItem('bg_secret_word_restrictions');
+      if (e && e.key && e.key.includes('bg_automation_status')) return; // Ignore status updates
+      const sw = getScopedItem('bg_secret_word_restrictions');
       if (sw) setWordRestrictions(JSON.parse(sw));
-      const sf = localStorage.getItem('bg_secret_automation_frequency');
+      const sf = getScopedItem('bg_secret_automation_frequency');
       if (sf) { const found = FREQ_OPTIONS.find(opt => opt.id === sf); if (found) setAutomationFrequency(found); }
-      const sm = localStorage.getItem('bg_secret_automation_mode') as 'main' | 'backup';
+      const sm = getScopedItem('bg_secret_automation_mode') as 'main' | 'backup';
       if (sm) setAutomationMode(sm);
-      setSelectedAudio(localStorage.getItem('bg_secret_audio') || '/Alert.mp3');
-      setLivePreviewEnabled(localStorage.getItem('bg_live_preview') === 'true');
+      setSelectedAudio(getScopedItem('bg_secret_audio') || '/Alert.mp3');
+      setLivePreviewEnabled(getScopedItem('bg_live_preview') === 'true');
 
       const settings = loadTypographySettings();
       setFontSize(settings.fontSize);
@@ -153,7 +154,7 @@ const Home = () => {
       }
     };
     preloadFonts();
-    const savedUrls = localStorage.getItem('bg_secret_processed_urls');
+    const savedUrls = getScopedItem('bg_secret_processed_urls');
     if (savedUrls) {
       try {
         const parsed = JSON.parse(savedUrls);
@@ -164,23 +165,23 @@ const Home = () => {
         // Fallback
       }
     }
-    if (localStorage.getItem('bg_secret_auto_active') === 'true') setAutoModeActive(true);
+    if (getScopedItem('bg_secret_auto_active') === 'true') setAutoModeActive(true);
     getAllRecordsDB().then(records => {
       setAutoRecords(records.sort((a, b) => (b.contentId || new Date(b.timestamp).getTime()) - (a.contentId || new Date(a.timestamp).getTime())));
     });
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('bg_secret_processed_urls', JSON.stringify(Array.from(processedUrls.entries()).map(([url, timestamp]) => ({ url, timestamp }))));
+    setScopedItem('bg_secret_processed_urls', JSON.stringify(Array.from(processedUrls.entries()).map(([url, timestamp]) => ({ url, timestamp }))));
   }, [processedUrls]);
 
   useEffect(() => {
-    localStorage.setItem('bg_secret_auto_active', String(autoModeActive));
+    setScopedItem('bg_secret_auto_active', String(autoModeActive));
     const status = !autoModeActive ? 'IDLE' : isLeader ? 'ACTIVE' : 'STANDBY';
-    const oldStatus = localStorage.getItem('bg_automation_status');
+    const oldStatus = getScopedItem('bg_automation_status');
     if (status !== oldStatus) {
-      localStorage.setItem('bg_automation_status', status);
-      window.dispatchEvent(new StorageEvent('storage', { key: 'bg_automation_status', newValue: status }));
+      setScopedItem('bg_automation_status', status);
+      window.dispatchEvent(new Event('storage'));
     }
   }, [autoModeActive, isLeader]);
 

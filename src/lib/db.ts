@@ -1,3 +1,6 @@
+import { getPageScope } from './pageScope';
+import { DB_SCHEMA_VERSION } from './versionConfig';
+
 export interface AutoRecord {
   id: string;
   url: string;
@@ -16,16 +19,27 @@ export interface AdData {
   data: string;
 }
 
-const DB_NAME = 'SecretBGDB';
-const STORE_NAME = 'photocards';
+export const SECRET_DB_BASE = 'SecretBGDB';
+export const AD_DB_BASE = 'AdImagesDB';
+export const PHOTOCARDS_STORE = 'photocards';
+export const ADS_STORE = 'ads';
 
-export const initDB = (): Promise<IDBDatabase> => {
+export function getScopedDbName(baseName: string, overrideScope?: string): string {
+  const scope = overrideScope || getPageScope();
+  return `${scope}_${baseName}`;
+}
+
+export const initDB = (overrideScope?: string, version = DB_SCHEMA_VERSION): Promise<IDBDatabase> => {
+  const dbName = getScopedDbName(SECRET_DB_BASE, overrideScope);
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    if (typeof indexedDB === 'undefined') {
+      return resolve({} as IDBDatabase);
+    }
+    const request = indexedDB.open(dbName, version);
     request.onupgradeneeded = () => {
       const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(PHOTOCARDS_STORE)) {
+        db.createObjectStore(PHOTOCARDS_STORE, { keyPath: 'id' });
       }
     };
     request.onsuccess = () => resolve(request.result);
@@ -33,33 +47,36 @@ export const initDB = (): Promise<IDBDatabase> => {
   });
 };
 
-export const deleteRecordDB = async (id: string) => {
-  const db = await initDB();
+export const deleteRecordDB = async (id: string, overrideScope?: string) => {
+  if (typeof indexedDB === 'undefined') return true;
+  const db = await initDB(overrideScope);
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
+    const tx = db.transaction(PHOTOCARDS_STORE, 'readwrite');
+    const store = tx.objectStore(PHOTOCARDS_STORE);
     store.delete(id);
     tx.oncomplete = () => resolve(true);
     tx.onerror = () => reject(tx.error);
   });
 };
 
-export const clearRecordsDB = async () => {
-  const db = await initDB();
+export const clearRecordsDB = async (overrideScope?: string) => {
+  if (typeof indexedDB === 'undefined') return true;
+  const db = await initDB(overrideScope);
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
+    const tx = db.transaction(PHOTOCARDS_STORE, 'readwrite');
+    const store = tx.objectStore(PHOTOCARDS_STORE);
     store.clear();
     tx.oncomplete = () => resolve(true);
     tx.onerror = () => reject(tx.error);
   });
 };
 
-export const saveRecordDB = async (record: AutoRecord) => {
-  const db = await initDB();
+export const saveRecordDB = async (record: AutoRecord, overrideScope?: string) => {
+  if (typeof indexedDB === 'undefined') return true;
+  const db = await initDB(overrideScope);
   const allRecords = await new Promise<AutoRecord[]>((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
+    const tx = db.transaction(PHOTOCARDS_STORE, 'readonly');
+    const store = tx.objectStore(PHOTOCARDS_STORE);
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
@@ -67,61 +84,89 @@ export const saveRecordDB = async (record: AutoRecord) => {
   if (allRecords.length >= 50) {
     const sorted = allRecords.sort((a, b) => (a.contentId || new Date(a.timestamp).getTime()) - (b.contentId || new Date(b.timestamp).getTime()));
     const toDeleteCount = (allRecords.length - 50) + 1;
-    const deleteTx = db.transaction(STORE_NAME, 'readwrite');
-    const deleteStore = deleteTx.objectStore(STORE_NAME);
+    const deleteTx = db.transaction(PHOTOCARDS_STORE, 'readwrite');
+    const deleteStore = deleteTx.objectStore(PHOTOCARDS_STORE);
     for (let i = 0; i < toDeleteCount; i++) deleteStore.delete(sorted[i].id);
     await new Promise((resolve) => { deleteTx.oncomplete = resolve; });
   }
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    tx.objectStore(STORE_NAME).put(record);
+    const tx = db.transaction(PHOTOCARDS_STORE, 'readwrite');
+    tx.objectStore(PHOTOCARDS_STORE).put(record);
     tx.oncomplete = () => resolve(true);
     tx.onerror = () => reject(tx.error);
   });
 };
 
-export const getAllRecordsDB = async (): Promise<AutoRecord[]> => {
-  const db = await initDB();
+export const getAllRecordsDB = async (overrideScope?: string): Promise<AutoRecord[]> => {
+  if (typeof indexedDB === 'undefined') return [];
+  const db = await initDB(overrideScope);
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
+    const tx = db.transaction(PHOTOCARDS_STORE, 'readonly');
+    const store = tx.objectStore(PHOTOCARDS_STORE);
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 };
 
-const AD_DB_NAME = 'AdImagesDB';
-const AD_STORE_NAME = 'ads';
-
-export const initAdDB = (): Promise<IDBDatabase> => {
+export const initAdDB = (overrideScope?: string, version = DB_SCHEMA_VERSION): Promise<IDBDatabase> => {
+  const dbName = getScopedDbName(AD_DB_BASE, overrideScope);
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(AD_DB_NAME, 1);
+    if (typeof indexedDB === 'undefined') {
+      return resolve({} as IDBDatabase);
+    }
+    const request = indexedDB.open(dbName, version);
     request.onupgradeneeded = () => {
       const db = request.result;
-      if (!db.objectStoreNames.contains(AD_STORE_NAME)) db.createObjectStore(AD_STORE_NAME, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(ADS_STORE)) {
+        db.createObjectStore(ADS_STORE, { keyPath: 'id' });
+      }
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 };
 
-export const getSelectedAd = async (id: string): Promise<AdData | undefined> => {
-  const db = await initAdDB();
+export const getSelectedAd = async (id: string, overrideScope?: string): Promise<AdData | undefined> => {
+  if (typeof indexedDB === 'undefined') return undefined;
+  const db = await initAdDB(overrideScope);
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(AD_STORE_NAME, 'readonly');
-    const request = tx.objectStore(AD_STORE_NAME).get(id);
+    const tx = db.transaction(ADS_STORE, 'readonly');
+    const request = tx.objectStore(ADS_STORE).get(id);
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 };
 
-export const getAllAdsDB = async (): Promise<AdData[]> => {
-  const db = await initAdDB();
+export const getAllAdsDB = async (overrideScope?: string): Promise<AdData[]> => {
+  if (typeof indexedDB === 'undefined') return [];
+  const db = await initAdDB(overrideScope);
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(AD_STORE_NAME, 'readonly');
-    const request = tx.objectStore(AD_STORE_NAME).getAll();
+    const tx = db.transaction(ADS_STORE, 'readonly');
+    const request = tx.objectStore(ADS_STORE).getAll();
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
+  });
+};
+
+export const saveAdDB = async (ad: AdData, overrideScope?: string) => {
+  if (typeof indexedDB === 'undefined') return true;
+  const db = await initAdDB(overrideScope);
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(ADS_STORE, 'readwrite');
+    tx.objectStore(ADS_STORE).put(ad);
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+export const deleteAdDB = async (id: string, overrideScope?: string) => {
+  if (typeof indexedDB === 'undefined') return true;
+  const db = await initAdDB(overrideScope);
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(ADS_STORE, 'readwrite');
+    tx.objectStore(ADS_STORE).delete(id);
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
   });
 };
