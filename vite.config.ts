@@ -44,6 +44,7 @@ export default defineConfig(({ mode }) => ({
         LMX: path.resolve(__dirname, "LMX/index.html"),
         DEEF: path.resolve(__dirname, "DEEF/index.html"),
         IPA: path.resolve(__dirname, "IPA/index.html"),
+        CORS: path.resolve(__dirname, "CORS/index.html"),
         "404": path.resolve(__dirname, "404.html"),
       },
     },
