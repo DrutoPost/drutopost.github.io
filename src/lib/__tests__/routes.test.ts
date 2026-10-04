@@ -15,6 +15,10 @@ describe('Router Fallback & Route Handling', () => {
 
     expect(handleRouteFallback('/IPA')).toEqual({ rewriteUrl: '/IPA/index.html', is404: false });
     expect(handleRouteFallback('/ipa/')).toEqual({ rewriteUrl: '/IPA/index.html', is404: false });
+
+    expect(handleRouteFallback('/CORS')).toEqual({ rewriteUrl: '/CORS/index.html', is404: false });
+    expect(handleRouteFallback('/cors/')).toEqual({ rewriteUrl: '/CORS/index.html', is404: false });
+    expect(handleRouteFallback('/cors/index.html')).toEqual({ rewriteUrl: '/CORS/index.html', is404: false });
   });
 
   it('allows root and static assets without rewriting', () => {

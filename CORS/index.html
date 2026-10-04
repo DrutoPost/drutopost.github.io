@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S66G195S02"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+
+    gtag("config", "G-S66G195S02");
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Drutopost - BD News CORS Tester</title>
+  <meta name="description" content="Check CORS availability for Bangladeshi news portals with Drutopost." />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="author" content="Abdullah Bari Asif" />
+  <link rel="icon" type="image/svg+xml" href="/Logoicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <meta property="og:title" content="Drutopost - BD News CORS Tester" />
+  <meta property="og:description" content="Check CORS availability for Bangladeshi news portals with Drutopost." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/Logoicon.svg" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Drutopost - BD News CORS Tester" />
+  <meta name="twitter:description" content="Check CORS availability for Bangladeshi news portals with Drutopost." />
+  <meta name="twitter:image" content="/Logoicon.svg" />
+
+  <script>
+    // Zoom Lock
+    document.addEventListener("wheel", function(e) {
+      if (e.ctrlKey) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    document.addEventListener("keydown", function(e) {
+      if (e.ctrlKey && (e.key === "=" || e.key === "-" || e.key === "0" || e.key === "+")) {
+        e.preventDefault();
+      }
+    });
+
+    // Copy Lock
+    document.addEventListener("copy", (e) => {
+      e.clipboardData.setData("text/plain", "Copying text is restricted.");
+      e.preventDefault();
+    });
+  </script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    h1 { text-align: center; color: #333; }
+    .controls { text-align: center; margin-bottom: 20px; }
+    button { padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+    button:hover { background: #0b7dda; }
+    .test-list { max-width: 700px; margin: 0 auto; }
+    .result { padding: 12px; margin: 10px 0; border-left: 4px solid; border-radius: 3px; }
+    .allowed { background: #e8f5e9; border-color: #4caf50; }
+    .blocked { background: #ffebee; border-color: #f44336; }
+    .testing { background: #fff3e0; border-color: #ff9800; }
+    .status { font-weight: bold; }
+    .url { font-size: 12px; color: #666; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>🇧🇩 Drutopost BD News CORS Tester</h1>
+  <div class="controls">
+    <button onclick="testAllSources()">Test All</button>
+    <button onclick="clearResults()">Clear</button>
+  </div>
+  <div class="test-list" id="results"></div>
+
+  <script>
+    const newsSources = [
+    {
+        "name": "prothomalo.com",
+        "url": "https://www.prothomalo.com"
+    },
+    {
+        "name": "bd-pratidin.com",
+        "url": "https://www.bd-pratidin.com"
+    },
+    {
+        "name": "jugantor.com",
+        "url": "https://www.jugantor.com"
+    },
+    {
+        "name": "kalerkantho.com",
+        "url": "https://www.kalerkantho.com"
+    },
+    {
+        "name": "ittefaq.com.bd",
+        "url": "https://www.ittefaq.com.bd"
+    },
+    {
+        "name": "samakal.com",
+        "url": "https://www.samakal.com"
+    },
+    {
+        "name": "dailyjanakantha.com",
+        "url": "https://www.dailyjanakantha.com"
+    },
+    {
+        "name": "mzamin.com",
+        "url": "https://www.mzamin.com"
+    },
+    {
+        "name": "dailynayadiganta.com",
+        "url": "https://www.dailynayadiganta.com"
+    },
+    {
+        "name": "ajkerpatrika.com",
+        "url": "https://www.ajkerpatrika.com"
+    },
+    {
+        "name": "dailykalbela.com",
+        "url": "https://www.dailykalbela.com"
+    },
+    {
+        "name": "deshrupantor.com",
+        "url": "https://www.deshrupantor.com"
+    },
+    {
+        "name": "dailyinqilab.com",
+        "url": "https://www.dailyinqilab.com"
+    },
+    {
+        "name": "dainikamadershomoy.com",
+        "url": "https://www.dainikamadershomoy.com"
+    },
+    {
+        "name": "dailysangram.com",
+        "url": "https://www.dailysangram.com"
+    },
+    {
+        "name": "thesangbad.net",
+        "url": "https://www.thesangbad.net"
+    },
+    {
+        "name": "jaijaidinbd.com",
+        "url": "https://www.jaijaidinbd.com"
+    },
+    {
+        "name": "bonikbarta.com",
+        "url": "https://www.bonikbarta.com"
+    },
+    {
+        "name": "alokitobangladesh.com",
+        "url": "https://www.alokitobangladesh.com"
+    },
+    {
+        "name": "khaborerkagoj.com",
+        "url": "https://www.khaborerkagoj.com"
+    },
+    {
+        "name": "bhorer-dak.com",
+        "url": "https://www.bhorer-dak.com"
+    },
+    {
+        "name": "manobkantha.com.bd",
+        "url": "https://www.manobkantha.com.bd"
+    },
+    {
+        "name": "shomoyeralo.com",
+        "url": "https://www.shomoyeralo.com"
+    },
+    {
+        "name": "amarsangbad.com",
+        "url": "https://www.amarsangbad.com"
+    },
+    {
+        "name": "dailydinkal.net",
+        "url": "https://www.dailydinkal.net"
+    },
+    {
+        "name": "dainik-destiny.com",
+        "url": "https://www.dainik-destiny.com"
+    },
+    {
+        "name": "ajkalerkhobor.com",
+        "url": "https://www.ajkalerkhobor.com"
+    },
+    {
+        "name": "dainiksakalbela.com",
+        "url": "https://www.dainiksakalbela.com"
+    },
+    {
+        "name": "sangbadkonika.com",
+        "url": "https://www.sangbadkonika.com"
+    },
+    {
+        "name": "dailyjagaran.com",
+        "url": "https://www.dailyjagaran.com"
+    },
+    {
+        "name": "djanata.com",
+        "url": "https://www.djanata.com"
+    },
+    {
+        "name": "somoyerkantha.com",
+        "url": "https://www.somoyerkantha.com"
+    },
+    {
+        "name": "dailynabochatona.com",
+        "url": "https://www.dailynabochatona.com"
+    },
+    {
+        "name": "sangbadchorcha.com",
+        "url": "https://www.sangbadchorcha.com"
+    },
+    {
+        "name": "dhakaprotidin.com",
+        "url": "https://www.dhakaprotidin.com"
+    },
+    {
+        "name": "dhakardak-bd.com",
+        "url": "https://www.dhakardak-bd.com"
+    },
+    {
+        "name": "sorejominbarta.com",
+        "url": "https://www.sorejominbarta.com"
+    },
+    {
+        "name": "natun-barta.com",
+        "url": "https://www.natun-barta.com"
+    },
+    {
+        "name": "dailybartoman.com",
+        "url": "https://www.dailybartoman.com"
+    },
+    {
+        "name": "dailyagnishikha.com",
+        "url": "https://www.dailyagnishikha.com"
+    },
+    {
+        "name": "dailynotunvor.com",
+        "url": "https://www.dailynotunvor.com"
+    },
+    {
+        "name": "khoborpatrabd.com",
+        "url": "https://www.khoborpatrabd.com"
+    },
+    {
+        "name": "dailyjubokantho.com",
+        "url": "https://www.dailyjubokantho.com"
+    },
+    {
+        "name": "deltatimes24.com",
+        "url": "https://www.deltatimes24.com"
+    },
+    {
+        "name": "dainikbangla.com.bd",
+        "url": "https://www.dainikbangla.com.bd"
+    },
+    {
+        "name": "businesspostbd.com",
+        "url": "https://www.businesspostbd.com"
+    },
+    {
+        "name": "amardesh.com",
+        "url": "https://www.amardesh.com"
+    },
+    {
+        "name": "vorerpata.com",
+        "url": "https://www.vorerpata.com"
+    },
+    {
+        "name": "protidinersangbad.com",
+        "url": "https://www.protidinersangbad.com"
+    },
+    {
+        "name": "sokalersomoy.com",
+        "url": "https://www.sokalersomoy.com"
+    },
+    {
+        "name": "kholakagojbd.com",
+        "url": "https://www.kholakagojbd.com"
+    },
+    {
+        "name": "gonokantho.com",
+        "url": "https://www.gonokantho.com"
+    },
+    {
+        "name": "bangladesherkhabor.net",
+        "url": "https://www.bangladesherkhabor.net"
+    },
+    {
+        "name": "suprobhat.com",
+        "url": "https://www.suprobhat.com"
+    },
+    {
+        "name": "somoyersomikoron.com",
+        "url": "https://www.somoyersomikoron.com"
+    },
+    {
+        "name": "sangbadprotidin.com",
+        "url": "https://www.sangbadprotidin.com"
+    },
+    {
+        "name": "thedailystar.net",
+        "url": "https://www.thedailystar.net"
+    },
+    {
+        "name": "dhakatribune.com",
+        "url": "https://www.dhakatribune.com"
+    },
+    {
+        "name": "thefinancialexpress.com.bd",
+        "url": "https://www.thefinancialexpress.com.bd"
+    },
+    {
+        "name": "tbsnews.net",
+        "url": "https://www.tbsnews.net"
+    },
+    {
+        "name": "newagebd.net",
+        "url": "https://www.newagebd.net"
+    },
+    {
+        "name": "daily-sun.com",
+        "url": "https://www.daily-sun.com"
+    },
+    {
+        "name": "observerbd.com",
+        "url": "https://www.observerbd.com"
+    },
+    {
+        "name": "thebangladeshtoday.com",
+        "url": "https://www.thebangladeshtoday.com"
+    },
+    {
+        "name": "bangladeshpost.net",
+        "url": "https://www.bangladeshpost.net"
+    },
+    {
+        "name": "dailyasianage.com",
+        "url": "https://www.dailyasianage.com"
+    },
+    {
+        "name": "dailynewnation.com",
+        "url": "https://www.dailynewnation.com"
+    },
+    {
+        "name": "weeklyholiday.net",
+        "url": "https://www.weeklyholiday.net"
+    },
+    {
+        "name": "weeklyblitz.net",
+        "url": "https://www.weeklyblitz.net"
+    },
+    {
+        "name": "theindependentbd.com",
+        "url": "https://www.theindependentbd.com"
+    },
+    {
+        "name": "thecountrytoday.com",
+        "url": "https://www.thecountrytoday.com"
+    },
+    {
+        "name": "dailyindustry.org",
+        "url": "https://www.dailyindustry.org"
+    },
+    {
+        "name": "energybangladesh.com",
+        "url": "https://www.energybangladesh.com"
+    },
+    {
+        "name": "businessinsiderbd.com",
+        "url": "https://www.businessinsiderbd.com"
+    },
+    {
+        "name": "bangladeshmonitor.com.bd",
+        "url": "https://www.bangladeshmonitor.com.bd"
+    },
+    {
+        "name": "bangladeshbulletin.com",
+        "url": "https://www.bangladeshbulletin.com"
+    },
+    {
+        "name": "echobd.com",
+        "url": "https://www.echobd.com"
+    },
+    {
+        "name": "dhakacourier.com.bd",
+        "url": "https://www.dhakacourier.com.bd"
+    },
+    {
+        "name": "dailymessenger.net",
+        "url": "https://www.dailymessenger.net"
+    },
+    {
+        "name": "daily-tribute.com",
+        "url": "https://www.daily-tribute.com"
+    },
+    {
+        "name": "voiceofbd.com",
+        "url": "https://www.voiceofbd.com"
+    },
+    {
+        "name": "bdnews24.com",
+        "url": "https://www.bdnews24.com"
+    },
+    {
+        "name": "banglanews24.com",
+        "url": "https://www.banglanews24.com"
+    },
+    {
+        "name": "jagonews24.com",
+        "url": "https://www.jagonews24.com"
+    },
+    {
+        "name": "banglatribune.com",
+        "url": "https://www.banglatribune.com"
+    },
+    {
+        "name": "risingbd.com",
+        "url": "https://www.risingbd.com"
+    },
+    {
+        "name": "dhakapost.com",
+        "url": "https://www.dhakapost.com"
+    },
+    {
+        "name": "barta24.com",
+        "url": "https://www.barta24.com"
+    },
+    {
+        "name": "sarabangla.net",
+        "url": "https://www.sarabangla.net"
+    },
+    {
+        "name": "newsbangla24.com",
+        "url": "https://www.newsbangla24.com"
+    },
+    {
+        "name": "dhakatimes24.com",
+        "url": "https://www.dhakatimes24.com"
+    },
+    {
+        "name": "bd24live.com",
+        "url": "https://www.bd24live.com"
+    },
+    {
+        "name": "daily-bangladesh.com",
+        "url": "https://www.daily-bangladesh.com"
+    },
+    {
+        "name": "banglainsider.com",
+        "url": "https://www.banglainsider.com"
+    },
+    {
+        "name": "somoyerkonthosor.com",
+        "url": "https://www.somoyerkonthosor.com"
+    },
+    {
+        "name": "ekusheysangbad.com",
+        "url": "https://www.ekusheysangbad.com"
+    },
+    {
+        "name": "dhakaprokash24.com",
+        "url": "https://www.dhakaprokash24.com"
+    },
+    {
+        "name": "dhakamail.com",
+        "url": "https://www.dhakamail.com"
+    },
+    {
+        "name": "zoombangla.com",
+        "url": "https://www.zoombangla.com"
+    },
+    {
+        "name": "bartabazar.com",
+        "url": "https://www.bartabazar.com"
+    },
+    {
+        "name": "bdlive24.com",
+        "url": "https://www.bdlive24.com"
+    },
+    {
+        "name": "ournewsbd.com",
+        "url": "https://www.ournewsbd.com"
+    },
+    {
+        "name": "sangbadprotidin24.com",
+        "url": "https://www.sangbadprotidin24.com"
+    },
+    {
+        "name": "thereport24.com",
+        "url": "https://www.thereport24.com"
+    },
+    {
+        "name": "thereport.live",
+        "url": "https://www.thereport.live"
+    },
+    {
+        "name": "sheershanews.com",
+        "url": "https://www.sheershanews.com"
+    },
+    {
+        "name": "somoyerchitra.com",
+        "url": "https://www.somoyerchitra.com"
+    },
+    {
+        "name": "newsjournal24.com",
+        "url": "https://www.newsjournal24.com"
+    },
+    {
+        "name": "hotnews24bd.com",
+        "url": "https://www.hotnews24bd.com"
+    },
+    {
+        "name": "jugobarta.com",
+        "url": "https://www.jugobarta.com"
+    },
+    {
+        "name": "bangladesh24online.com",
+        "url": "https://www.bangladesh24online.com"
+    },
+    {
+        "name": "dhakadiplomat.com",
+        "url": "https://www.dhakadiplomat.com"
+    },
+    {
+        "name": "themailbd.com",
+        "url": "https://www.themailbd.com"
+    },
+    {
+        "name": "bbarta24.net",
+        "url": "https://www.bbarta24.net"
+    },
+    {
+        "name": "nirapadnews24.com",
+        "url": "https://www.nirapadnews24.com"
+    },
+    {
+        "name": "currentnews.com.bd",
+        "url": "https://www.currentnews.com.bd"
+    },
+    {
+        "name": "timebanglanews.com",
+        "url": "https://www.timebanglanews.com"
+    },
+    {
+        "name": "greenwatchbd.com",
+        "url": "https://www.greenwatchbd.com"
+    },
+    {
+        "name": "unitednews24.com",
+        "url": "https://www.unitednews24.com"
+    },
+    {
+        "name": "womeneye24.com",
+        "url": "https://www.womeneye24.com"
+    },
+    {
+        "name": "abnews24bd.com",
+        "url": "https://www.abnews24bd.com"
+    },
+    {
+        "name": "ournews24.com",
+        "url": "https://www.ournews24.com"
+    },
+    {
+        "name": "u71news.com",
+        "url": "https://www.u71news.com"
+    },
+    {
+        "name": "cnewsvoice.com",
+        "url": "https://www.cnewsvoice.com"
+    },
+    {
+        "name": "latestnewsbd.com",
+        "url": "https://www.latestnewsbd.com"
+    },
+    {
+        "name": "sharenews24.com",
+        "url": "https://www.sharenews24.com"
+    },
+    {
+        "name": "probashirdiganta.com",
+        "url": "https://www.probashirdiganta.com"
+    },
+    {
+        "name": "deshnews24.com",
+        "url": "https://www.deshnews24.com"
+    },
+    {
+        "name": "bhorerkagoj.net",
+        "url": "https://www.bhorerkagoj.net"
+    },
+    {
+        "name": "satyabhani.com",
+        "url": "https://www.satyabhani.com"
+    },
+    {
+        "name": "manobkantho.com",
+        "url": "https://www.manobkantho.com"
+    },
+    {
+        "name": "canvasmagazine.com.bd",
+        "url": "https://www.canvasmagazine.com.bd"
+    },
+    {
+        "name": "nagorik.com",
+        "url": "https://www.nagorik.com"
+    },
+    {
+        "name": "bd-journal.com",
+        "url": "https://www.bd-journal.com"
+    },
+    {
+        "name": "amibd.com",
+        "url": "https://www.amibd.com"
+    },
+    {
+        "name": "pressxpress.org",
+        "url": "https://www.pressxpress.org"
+    },
+    {
+        "name": "dismislab.com",
+        "url": "https://www.dismislab.com"
+    },
+    {
+        "name": "factwatch.org",
+        "url": "https://www.factwatch.org"
+    },
+    {
+        "name": "rumorscanner.com",
+        "url": "https://www.rumorscanner.com"
+    },
+    {
+        "name": "bdbulletin.com",
+        "url": "https://www.bdbulletin.com"
+    },
+    {
+        "name": "bdnewsnetwork.com",
+        "url": "https://www.bdnewsnetwork.com"
+    },
+    {
+        "name": "poriborton.com",
+        "url": "https://www.poriborton.com"
+    },
+    {
+        "name": "dhakadigest.com",
+        "url": "https://www.dhakadigest.com"
+    },
+    {
+        "name": "canvasbd.com",
+        "url": "https://www.canvasbd.com"
+    },
+    {
+        "name": "bdexpress.net",
+        "url": "https://www.bdexpress.net"
+    },
+    {
+        "name": "amardeshonline.com",
+        "url": "https://www.amardeshonline.com"
+    },
+    {
+        "name": "voice24bd.com",
+        "url": "https://www.voice24bd.com"
+    },
+    {
+        "name": "nabinbarta.com",
+        "url": "https://www.nabinbarta.com"
+    },
+    {
+        "name": "chinta.com",
+        "url": "https://www.chinta.com"
+    },
+    {
+        "name": "deshsangbad.com",
+        "url": "https://www.deshsangbad.com"
+    },
+    {
+        "name": "grambangla24.com",
+        "url": "https://www.grambangla24.com"
+    },
+    {
+        "name": "gonosangbad.com",
+        "url": "https://www.gonosangbad.com"
+    },
+    {
+        "name": "dharitribd.com",
+        "url": "https://www.dharitribd.com"
+    },
+    {
+        "name": "barta71.com",
+        "url": "https://www.barta71.com"
+    },
+    {
+        "name": "protidinbd.com",
+        "url": "https://www.protidinbd.com"
+    },
+    {
+        "name": "newsgarden24.com",
+        "url": "https://www.newsgarden24.com"
+    },
+    {
+        "name": "priyo.com",
+        "url": "https://www.priyo.com"
+    },
+    {
+        "name": "bdtoday.net",
+        "url": "https://www.bdtoday.net"
+    },
+    {
+        "name": "bdexpress24.com",
+        "url": "https://www.bdexpress24.com"
+    },
+    {
+        "name": "newstodaybd.com",
+        "url": "https://www.newstodaybd.com"
+    },
+    {
+        "name": "chottogramnews.com",
+        "url": "https://www.chottogramnews.com"
+    },
+    {
+        "name": "bdmonitornews.com",
+        "url": "https://www.bdmonitornews.com"
+    },
+    {
+        "name": "bdmorning.com",
+        "url": "https://www.bdmorning.com"
+    },
+    {
+        "name": "nayabarta.com",
+        "url": "https://www.nayabarta.com"
+    },
+    {
+        "name": "newsnationbd.com",
+        "url": "https://www.newsnationbd.com"
+    },
+    {
+        "name": "bartakontho.com",
+        "url": "https://www.bartakontho.com"
+    },
+    {
+        "name": "bdsangbad24.com",
+        "url": "https://www.bdsangbad24.com"
+    },
+    {
+        "name": "swadeshnews24.com",
+        "url": "https://www.swadeshnews24.com"
+    },
+    {
+        "name": "weeklykhabar.com",
+        "url": "https://www.weeklykhabar.com"
+    },
+    {
+        "name": "voiceofbd24.com",
+        "url": "https://www.voiceofbd24.com"
+    },
+    {
+        "name": "bhoreralo.com",
+        "url": "https://www.bhoreralo.com"
+    },
+    {
+        "name": "amarsomoy.com",
+        "url": "https://www.amarsomoy.com"
+    },
+    {
+        "name": "somoyerbarta.com",
+        "url": "https://www.somoyerbarta.com"
+    },
+    {
+        "name": "dainikkhobor.com",
+        "url": "https://www.dainikkhobor.com"
+    },
+    {
+        "name": "banglamail24.com",
+        "url": "https://www.banglamail24.com"
+    },
+    {
+        "name": "nayadiganta.com",
+        "url": "https://www.nayadiganta.com"
+    },
+    {
+        "name": "bartadesh.com",
+        "url": "https://www.bartadesh.com"
+    },
+    {
+        "name": "bdheadline.com",
+        "url": "https://www.bdheadline.com"
+    },
+    {
+        "name": "khoboronline.com",
+        "url": "https://www.khoboronline.com"
+    },
+    {
+        "name": "newzbd.com",
+        "url": "https://www.newzbd.com"
+    },
+    {
+        "name": "deshsomoy.com",
+        "url": "https://www.deshsomoy.com"
+    },
+    {
+        "name": "natundin.com",
+        "url": "https://www.natundin.com"
+    },
+    {
+        "name": "nokshibarta.com",
+        "url": "https://www.nokshibarta.com"
+    },
+    {
+        "name": "probashnews24.com",
+        "url": "https://www.probashnews24.com"
+    },
+    {
+        "name": "amarkhabar24.com",
+        "url": "https://www.amarkhabar24.com"
+    },
+    {
+        "name": "shomoybarta.com",
+        "url": "https://www.shomoybarta.com"
+    },
+    {
+        "name": "jagaran.com.bd",
+        "url": "https://www.jagaran.com.bd"
+    },
+    {
+        "name": "newshourbd.com",
+        "url": "https://www.newshourbd.com"
+    },
+    {
+        "name": "janatabd.com",
+        "url": "https://www.janatabd.com"
+    },
+    {
+        "name": "natunsangbad.com",
+        "url": "https://www.natunsangbad.com"
+    },
+    {
+        "name": "nagarikbarta.com",
+        "url": "https://www.nagarikbarta.com"
+    },
+    {
+        "name": "deshprotidin.com",
+        "url": "https://www.deshprotidin.com"
+    },
+    {
+        "name": "somoyersongbad.com",
+        "url": "https://www.somoyersongbad.com"
+    },
+    {
+        "name": "chintabarta.com",
+        "url": "https://www.chintabarta.com"
+    },
+    {
+        "name": "bartaprokas.com",
+        "url": "https://www.bartaprokas.com"
+    },
+    {
+        "name": "dainikbarta.com",
+        "url": "https://www.dainikbarta.com"
+    },
+    {
+        "name": "bdflashnews.com",
+        "url": "https://www.bdflashnews.com"
+    },
+    {
+        "name": "bartakantho.com.bd",
+        "url": "https://www.bartakantho.com.bd"
+    },
+    {
+        "name": "voiceofcoxsbazar.com",
+        "url": "https://www.voiceofcoxsbazar.com"
+    },
+    {
+        "name": "khabar24bd.com",
+        "url": "https://www.khabar24bd.com"
+    },
+    {
+        "name": "somoyerchokh.com",
+        "url": "https://www.somoyerchokh.com"
+    },
+    {
+        "name": "nagorikkhabar.com",
+        "url": "https://www.nagorikkhabar.com"
+    },
+    {
+        "name": "digitalbanglanews.com",
+        "url": "https://www.digitalbanglanews.com"
+    },
+    {
+        "name": "ekushey.com",
+        "url": "https://www.ekushey.com"
+    },
+    {
+        "name": "banglapulse.com",
+        "url": "https://www.banglapulse.com"
+    },
+    {
+        "name": "sangbad.net",
+        "url": "https://www.sangbad.net"
+    },
+    {
+        "name": "bartabhavan.com",
+        "url": "https://www.bartabhavan.com"
+    },
+    {
+        "name": "protidinkhobor.com",
+        "url": "https://www.protidinkhobor.com"
+    },
+    {
+        "name": "satyabd.com",
+        "url": "https://www.satyabd.com"
+    },
+    {
+        "name": "deshbarta.com",
+        "url": "https://www.deshbarta.com"
+    },
+    {
+        "name": "shomoyeralo.net",
+        "url": "https://www.shomoyeralo.net"
+    },
+    {
+        "name": "bartabd24.com",
+        "url": "https://www.bartabd24.com"
+    },
+    {
+        "name": "nayasangbad.com",
+        "url": "https://www.nayasangbad.com"
+    },
+    {
+        "name": "digitalbdnews.com",
+        "url": "https://www.digitalbdnews.com"
+    },
+    {
+        "name": "dainikbarta24.com",
+        "url": "https://www.dainikbarta24.com"
+    },
+    {
+        "name": "ajkalersangbad.com",
+        "url": "https://www.ajkalersangbad.com"
+    },
+    {
+        "name": "dhakakhabar.com",
+        "url": "https://www.dhakakhabar.com"
+    },
+    {
+        "name": "gramenkhabar.com",
+        "url": "https://www.gramenkhabar.com"
+    },
+    {
+        "name": "deshkantha.com",
+        "url": "https://www.deshkantha.com"
+    },
+    {
+        "name": "banglakhabar24.com",
+        "url": "https://www.banglakhabar24.com"
+    },
+    {
+        "name": "bdreporter24.com",
+        "url": "https://www.bdreporter24.com"
+    },
+    {
+        "name": "sangbadbangla.com",
+        "url": "https://www.sangbadbangla.com"
+    },
+    {
+        "name": "bhorerbarta.com",
+        "url": "https://www.bhorerbarta.com"
+    },
+    {
+        "name": "nirapad24.com",
+        "url": "https://www.nirapad24.com"
+    },
+    {
+        "name": "dainikmatribhumi.com",
+        "url": "https://www.dainikmatribhumi.com"
+    },
+    {
+        "name": "probashirchokh.com",
+        "url": "https://www.probashirchokh.com"
+    },
+    {
+        "name": "dhakalive24.com",
+        "url": "https://www.dhakalive24.com"
+    },
+    {
+        "name": "bdnewshour.com",
+        "url": "https://www.bdnewshour.com"
+    },
+    {
+        "name": "voiceofbd.net",
+        "url": "https://www.voiceofbd.net"
+    },
+    {
+        "name": "shadhinbarta.com",
+        "url": "https://www.shadhinbarta.com"
+    },
+    {
+        "name": "songbad24.com",
+        "url": "https://www.songbad24.com"
+    },
+    {
+        "name": "sangbadsomoy.com",
+        "url": "https://www.sangbadsomoy.com"
+    },
+    {
+        "name": "amarbd24.com",
+        "url": "https://www.amarbd24.com"
+    },
+    {
+        "name": "natunalo24.com",
+        "url": "https://www.natunalo24.com"
+    },
+    {
+        "name": "deshnewsnetwork.com",
+        "url": "https://www.deshnewsnetwork.com"
+    },
+    {
+        "name": "dailyjanakantha.net",
+        "url": "https://www.dailyjanakantha.net"
+    },
+    {
+        "name": "dhakaexpress.com",
+        "url": "https://www.dhakaexpress.com"
+    },
+    {
+        "name": "shomoyerchitron.com",
+        "url": "https://www.shomoyerchitron.com"
+    },
+    {
+        "name": "dailybhorerdak.com",
+        "url": "https://www.dailybhorerdak.com"
+    },
+    {
+        "name": "grambanglanews.com",
+        "url": "https://www.grambanglanews.com"
+    },
+    {
+        "name": "bartaport.com",
+        "url": "https://www.bartaport.com"
+    },
+    {
+        "name": "banglaworld24.com",
+        "url": "https://www.banglaworld24.com"
+    },
+    {
+        "name": "deshvarta.com",
+        "url": "https://www.deshvarta.com"
+    },
+    {
+        "name": "voiceofuttara.com",
+        "url": "https://www.voiceofuttara.com"
+    },
+    {
+        "name": "digitalsangbad.com",
+        "url": "https://www.digitalsangbad.com"
+    },
+    {
+        "name": "deshbidesh24.com",
+        "url": "https://www.deshbidesh24.com"
+    },
+    {
+        "name": "somoyersrot.com",
+        "url": "https://www.somoyersrot.com"
+    },
+    {
+        "name": "ajkerbarta.com",
+        "url": "https://www.ajkerbarta.com"
+    },
+    {
+        "name": "edainikazadi.net",
+        "url": "https://www.edainikazadi.net"
+    },
+    {
+        "name": "dainikpurbatara.com",
+        "url": "https://www.dainikpurbatara.com"
+    },
+    {
+        "name": "thedailyshangu.com",
+        "url": "https://www.thedailyshangu.com"
+    },
+    {
+        "name": "jaintabarta24.com",
+        "url": "https://www.jaintabarta24.com"
+    },
+    {
+        "name": "kazirbazar.com",
+        "url": "https://www.kazirbazar.com"
+    },
+    {
+        "name": "purbanchal.com",
+        "url": "https://www.purbanchal.com"
+    },
+    {
+        "name": "dainikporibesh.com",
+        "url": "https://www.dainikporibesh.com"
+    },
+    {
+        "name": "dailypurbodesh.com",
+        "url": "https://www.dailypurbodesh.com"
+    },
+    {
+        "name": "sonalisangbad.com",
+        "url": "https://www.sonalisangbad.com"
+    },
+    {
+        "name": "dailysunshine.com.bd",
+        "url": "https://www.dailysunshine.com.bd"
+    },
+    {
+        "name": "dainikpurbokone.net",
+        "url": "https://www.dainikpurbokone.net"
+    },
+    {
+        "name": "dainikkalyan.com",
+        "url": "https://www.dainikkalyan.com"
+    },
+    {
+        "name": "dainikkushtia.net",
+        "url": "https://www.dainikkushtia.net"
+    },
+    {
+        "name": "sylheterdak.com.bd",
+        "url": "https://www.sylheterdak.com.bd"
+    },
+    {
+        "name": "comillarkagoj.com",
+        "url": "https://www.comillarkagoj.com"
+    },
+    {
+        "name": "karatoa.com.bd",
+        "url": "https://www.karatoa.com.bd"
+    },
+    {
+        "name": "gramerkagoj.com",
+        "url": "https://www.gramerkagoj.com"
+    },
+    {
+        "name": "sylhettoday24.news",
+        "url": "https://www.sylhettoday24.news"
+    },
+    {
+        "name": "rajshahinews24.com",
+        "url": "https://www.rajshahinews24.com"
+    },
+    {
+        "name": "mathabhanga.com",
+        "url": "https://www.mathabhanga.com"
+    },
+    {
+        "name": "chandpurtimes.com",
+        "url": "https://www.chandpurtimes.com"
+    },
+    {
+        "name": "dailycoxsbazar.com",
+        "url": "https://www.dailycoxsbazar.com"
+    },
+    {
+        "name": "ctgnews.com",
+        "url": "https://www.ctgnews.com"
+    },
+    {
+        "name": "chattagramnews.com",
+        "url": "https://www.chattagramnews.com"
+    },
+    {
+        "name": "ctgbanglanews24.com",
+        "url": "https://www.ctgbanglanews24.com"
+    },
+    {
+        "name": "dainiksylhet.com",
+        "url": "https://www.dainiksylhet.com"
+    },
+    {
+        "name": "sylhetexpress.com",
+        "url": "https://www.sylhetexpress.com"
+    },
+    {
+        "name": "sylhetnewsprotidin.com",
+        "url": "https://www.sylhetnewsprotidin.com"
+    },
+    {
+        "name": "surmatimes.com",
+        "url": "https://www.surmatimes.com"
+    },
+    {
+        "name": "dailykhowai.com",
+        "url": "https://www.dailykhowai.com"
+    },
+    {
+        "name": "bograsangbad.com",
+        "url": "https://www.bograsangbad.com"
+    },
+    {
+        "name": "rajshahirsomoy.com",
+        "url": "https://www.rajshahirsomoy.com"
+    },
+    {
+        "name": "ajkerbarisal.com",
+        "url": "https://www.ajkerbarisal.com"
+    },
+    {
+        "name": "barisallive24.com",
+        "url": "https://www.barisallive24.com"
+    },
+    {
+        "name": "kuakatanews.com",
+        "url": "https://www.kuakatanews.com"
+    },
+    {
+        "name": "rangpurchitra.com",
+        "url": "https://www.rangpurchitra.com"
+    },
+    {
+        "name": "thakurgaonlive.com",
+        "url": "https://www.thakurgaonlive.com"
+    },
+    {
+        "name": "amadercomilla.com",
+        "url": "https://www.amadercomilla.com"
+    },
+    {
+        "name": "chandpurweb.com",
+        "url": "https://www.chandpurweb.com"
+    },
+    {
+        "name": "lakshmipur24.com",
+        "url": "https://www.lakshmipur24.com"
+    },
+    {
+        "name": "amaderbrahmanbaria.com",
+        "url": "https://www.amaderbrahmanbaria.com"
+    },
+    {
+        "name": "risingcumilla.com",
+        "url": "https://www.risingcumilla.com"
+    },
+    {
+        "name": "ajkerjamalpur.com",
+        "url": "https://www.ajkerjamalpur.com"
+    },
+    {
+        "name": "tangailtimes24.com",
+        "url": "https://www.tangailtimes24.com"
+    },
+    {
+        "name": "shamprotikshawdesh.com",
+        "url": "https://www.shamprotikshawdesh.com"
+    },
+    {
+        "name": "onabil.net",
+        "url": "https://www.onabil.net"
+    },
+    {
+        "name": "muktokhobor24.com",
+        "url": "https://www.muktokhobor24.com"
+    },
+    {
+        "name": "cnnbangladesh.com",
+        "url": "https://www.cnnbangladesh.com"
+    },
+    {
+        "name": "e-kantho24.com",
+        "url": "https://www.e-kantho24.com"
+    },
+    {
+        "name": "chattogrampratidin.com",
+        "url": "https://www.chattogrampratidin.com"
+    },
+    {
+        "name": "sylhetvoice.com",
+        "url": "https://www.sylhetvoice.com"
+    },
+    {
+        "name": "bholarbani.com",
+        "url": "https://www.bholarbani.com"
+    },
+    {
+        "name": "bholarkagoj.com",
+        "url": "https://www.bholarkagoj.com"
+    },
+    {
+        "name": "khulnanews.com",
+        "url": "https://www.khulnanews.com"
+    },
+    {
+        "name": "pabnasamachar.com",
+        "url": "https://www.pabnasamachar.com"
+    },
+    {
+        "name": "pabnanews24.com",
+        "url": "https://www.pabnanews24.com"
+    },
+    {
+        "name": "mymensinghpratidin.com",
+        "url": "https://www.mymensinghpratidin.com"
+    },
+    {
+        "name": "mymensinghtimes.com",
+        "url": "https://www.mymensinghtimes.com"
+    },
+    {
+        "name": "dainikcoxsbazar.com",
+        "url": "https://www.dainikcoxsbazar.com"
+    },
+    {
+        "name": "crownnews24.com",
+        "url": "https://www.crownnews24.com"
+    },
+    {
+        "name": "nayazamana.com",
+        "url": "https://www.nayazamana.com"
+    },
+    {
+        "name": "sylhetreport.com",
+        "url": "https://www.sylhetreport.com"
+    },
+    {
+        "name": "fenirsomoy.com",
+        "url": "https://www.fenirsomoy.com"
+    },
+    {
+        "name": "feninews.com",
+        "url": "https://www.feninews.com"
+    },
+    {
+        "name": "noakhaliweb.com",
+        "url": "https://www.noakhaliweb.com"
+    },
+    {
+        "name": "satkhiranews.com",
+        "url": "https://www.satkhiranews.com"
+    },
+    {
+        "name": "dinajpurnews.com",
+        "url": "https://www.dinajpurnews.com"
+    },
+    {
+        "name": "natorenews24.com",
+        "url": "https://www.natorenews24.com"
+    },
+    {
+        "name": "sirajganjnews24.com",
+        "url": "https://www.sirajganjnews24.com"
+    },
+    {
+        "name": "patuakhalinews.com",
+        "url": "https://www.patuakhalinews.com"
+    },
+    {
+        "name": "bargunanews.com",
+        "url": "https://www.bargunanews.com"
+    },
+    {
+        "name": "faridpurnews.com",
+        "url": "https://www.faridpurnews.com"
+    },
+    {
+        "name": "gopalganjnews.com",
+        "url": "https://www.gopalganjnews.com"
+    },
+    {
+        "name": "madaripur24.com",
+        "url": "https://www.madaripur24.com"
+    },
+    {
+        "name": "shariatpurnews.com",
+        "url": "https://www.shariatpurnews.com"
+    },
+    {
+        "name": "manikganj24.com",
+        "url": "https://www.manikganj24.com"
+    },
+    {
+        "name": "munshiganjnews.com",
+        "url": "https://www.munshiganjnews.com"
+    },
+    {
+        "name": "narsingdilive.com",
+        "url": "https://www.narsingdilive.com"
+    },
+    {
+        "name": "gazipuronline.com",
+        "url": "https://www.gazipuronline.com"
+    },
+    {
+        "name": "narayanganjnews24.com",
+        "url": "https://www.narayanganjnews24.com"
+    },
+    {
+        "name": "pressnarayanganj.com",
+        "url": "https://www.pressnarayanganj.com"
+    },
+    {
+        "name": "narayanganjtimes.com",
+        "url": "https://www.narayanganjtimes.com"
+    },
+    {
+        "name": "dainiksathi.com",
+        "url": "https://www.dainiksathi.com"
+    },
+    {
+        "name": "habiganjexpress.com",
+        "url": "https://www.habiganjexpress.com"
+    },
+    {
+        "name": "moulvibazar24.com",
+        "url": "https://www.moulvibazar24.com"
+    },
+    {
+        "name": "sunamganjnews.com",
+        "url": "https://www.sunamganjnews.com"
+    },
+    {
+        "name": "kishoreganjnews.com",
+        "url": "https://www.kishoreganjnews.com"
+    },
+    {
+        "name": "netrokonanews.com",
+        "url": "https://www.netrokonanews.com"
+    },
+    {
+        "name": "sherpurtimes.com",
+        "url": "https://www.sherpurtimes.com"
+    },
+    {
+        "name": "jamalpurnews24.com",
+        "url": "https://www.jamalpurnews24.com"
+    },
+    {
+        "name": "kurigramnews.com",
+        "url": "https://www.kurigramnews.com"
+    },
+    {
+        "name": "gaibandhanews.com",
+        "url": "https://www.gaibandhanews.com"
+    },
+    {
+        "name": "nilphamari24.com",
+        "url": "https://www.nilphamari24.com"
+    },
+    {
+        "name": "panchagarhnews.com",
+        "url": "https://www.panchagarhnews.com"
+    },
+    {
+        "name": "lalmonirhatnews.com",
+        "url": "https://www.lalmonirhatnews.com"
+    },
+    {
+        "name": "naogaonnews.com",
+        "url": "https://www.naogaonnews.com"
+    },
+    {
+        "name": "joypurhatlive.com",
+        "url": "https://www.joypurhatlive.com"
+    },
+    {
+        "name": "chapainews.com",
+        "url": "https://www.chapainews.com"
+    },
+    {
+        "name": "bogralive.com",
+        "url": "https://www.bogralive.com"
+    },
+    {
+        "name": "meherpurnews.com",
+        "url": "https://www.meherpurnews.com"
+    },
+    {
+        "name": "chuadangalive.com",
+        "url": "https://www.chuadangalive.com"
+    },
+    {
+        "name": "jhenaidahnews.com",
+        "url": "https://www.jhenaidahnews.com"
+    },
+    {
+        "name": "maguranews.com",
+        "url": "https://www.maguranews.com"
+    },
+    {
+        "name": "narailnews24.com",
+        "url": "https://www.narailnews24.com"
+    },
+    {
+        "name": "bagerhatnews.com",
+        "url": "https://www.bagerhatnews.com"
+    },
+    {
+        "name": "satkhiravoice.com",
+        "url": "https://www.satkhiravoice.com"
+    },
+    {
+        "name": "jhalakathinews.com",
+        "url": "https://www.jhalakathinews.com"
+    },
+    {
+        "name": "pirojpurnews.com",
+        "url": "https://www.pirojpurnews.com"
+    },
+    {
+        "name": "bholanews24.com",
+        "url": "https://www.bholanews24.com"
+    },
+    {
+        "name": "brahmanbarianews.com",
+        "url": "https://www.brahmanbarianews.com"
+    },
+    {
+        "name": "comillanews.com",
+        "url": "https://www.comillanews.com"
+    },
+    {
+        "name": "noakhaliexpress.com",
+        "url": "https://www.noakhaliexpress.com"
+    },
+    {
+        "name": "fenimail.com",
+        "url": "https://www.fenimail.com"
+    },
+    {
+        "name": "khagracharinews.com",
+        "url": "https://www.khagracharinews.com"
+    },
+    {
+        "name": "rangamatinews.com",
+        "url": "https://www.rangamatinews.com"
+    },
+    {
+        "name": "bandarbannews.com",
+        "url": "https://www.bandarbannews.com"
+    },
+    {
+        "name": "coxsbazarnews.com",
+        "url": "https://www.coxsbazarnews.com"
+    },
+    {
+        "name": "somoynews.tv",
+        "url": "https://www.somoynews.tv"
+    },
+    {
+        "name": "jamuna.tv",
+        "url": "https://www.jamuna.tv"
+    },
+    {
+        "name": "channel24bd.tv",
+        "url": "https://www.channel24bd.tv"
+    },
+    {
+        "name": "ntvbd.com",
+        "url": "https://www.ntvbd.com"
+    },
+    {
+        "name": "rtvonline.com",
+        "url": "https://www.rtvonline.com"
+    },
+    {
+        "name": "channelionline.com",
+        "url": "https://www.channelionline.com"
+    },
+    {
+        "name": "ekattor.tv",
+        "url": "https://www.ekattor.tv"
+    },
+    {
+        "name": "dbcnews.tv",
+        "url": "https://www.dbcnews.tv"
+    },
+    {
+        "name": "independent24.tv",
+        "url": "https://www.independent24.tv"
+    },
+    {
+        "name": "atnnewstv.com",
+        "url": "https://www.atnnewstv.com"
+    },
+    {
+        "name": "atnbangla.tv",
+        "url": "https://www.atnbangla.tv"
+    },
+    {
+        "name": "bvnews24.com",
+        "url": "https://www.bvnews24.com"
+    },
+    {
+        "name": "desh.tv",
+        "url": "https://www.desh.tv"
+    },
+    {
+        "name": "ekushey-tv.com",
+        "url": "https://www.ekushey-tv.com"
+    },
+    {
+        "name": "satv.tv",
+        "url": "https://www.satv.tv"
+    },
+    {
+        "name": "maasranga.tv",
+        "url": "https://www.maasranga.tv"
+    },
+    {
+        "name": "gazitv.com",
+        "url": "https://www.gazitv.com"
+    },
+    {
+        "name": "ekhon.tv",
+        "url": "https://www.ekhon.tv"
+    },
+    {
+        "name": "news24bd.tv",
+        "url": "https://www.news24bd.tv"
+    },
+    {
+        "name": "btv.gov.bd",
+        "url": "https://www.btv.gov.bd"
+    },
+    {
+        "name": "btvworld.gov.bd",
+        "url": "https://www.btvworld.gov.bd"
+    },
+    {
+        "name": "sangattv.com",
+        "url": "https://www.sangattv.com"
+    },
+    {
+        "name": "channel9bd.tv",
+        "url": "https://www.channel9bd.tv"
+    },
+    {
+        "name": "asiantvbd.com",
+        "url": "https://www.asiantvbd.com"
+    },
+    {
+        "name": "bijoytv.net",
+        "url": "https://www.bijoytv.net"
+    },
+    {
+        "name": "mohonatv.com",
+        "url": "https://www.mohonatv.com"
+    },
+    {
+        "name": "mytvbd.tv",
+        "url": "https://www.mytvbd.tv"
+    },
+    {
+        "name": "anandatv.tv",
+        "url": "https://www.anandatv.tv"
+    },
+    {
+        "name": "radiotoday.fm",
+        "url": "https://www.radiotoday.fm"
+    },
+    {
+        "name": "jagofm.bd",
+        "url": "https://www.jagofm.bd"
+    },
+    {
+        "name": "radiocapital.fm",
+        "url": "https://www.radiocapital.fm"
+    },
+    {
+        "name": "radiofoorti.fm",
+        "url": "https://www.radiofoorti.fm"
+    },
+    {
+        "name": "radiobhumi.fm",
+        "url": "https://www.radiobhumi.fm"
+    },
+    {
+        "name": "peoplesradio.fm",
+        "url": "https://www.peoplesradio.fm"
+    },
+    {
+        "name": "radioshadhin.fm",
+        "url": "https://www.radioshadhin.fm"
+    },
+    {
+        "name": "arthosuchak.com",
+        "url": "https://www.arthosuchak.com"
+    },
+    {
+        "name": "sharebiz.net",
+        "url": "https://www.sharebiz.net"
+    },
+    {
+        "name": "sharebazarnews.com",
+        "url": "https://www.sharebazarnews.com"
+    },
+    {
+        "name": "amaderorthoneeti.com",
+        "url": "https://www.amaderorthoneeti.com"
+    },
+    {
+        "name": "businesshour24.com",
+        "url": "https://www.businesshour24.com"
+    },
+    {
+        "name": "bankingnewsbd.com",
+        "url": "https://www.bankingnewsbd.com"
+    },
+    {
+        "name": "biniyougbarta.com",
+        "url": "https://www.biniyougbarta.com"
+    },
+    {
+        "name": "stockbangladesh.com",
+        "url": "https://www.stockbangladesh.com"
+    },
+    {
+        "name": "sunbd24.com",
+        "url": "https://www.sunbd24.com"
+    },
+    {
+        "name": "orthosongbad.com",
+        "url": "https://www.orthosongbad.com"
+    },
+    {
+        "name": "sharemarketbd.com",
+        "url": "https://www.sharemarketbd.com"
+    },
+    {
+        "name": "sharebusinessbd.com",
+        "url": "https://www.sharebusinessbd.com"
+    },
+    {
+        "name": "businessworldbd.com",
+        "url": "https://www.businessworldbd.com"
+    },
+    {
+        "name": "financialpostbd.com",
+        "url": "https://www.financialpostbd.com"
+    },
+    {
+        "name": "bazarbarta.com",
+        "url": "https://www.bazarbarta.com"
+    },
+    {
+        "name": "marketnewsbd.com",
+        "url": "https://www.marketnewsbd.com"
+    },
+    {
+        "name": "economybd.com",
+        "url": "https://www.economybd.com"
+    },
+    {
+        "name": "capitalnewsbd.com",
+        "url": "https://www.capitalnewsbd.com"
+    },
+    {
+        "name": "moneytodaybd.com",
+        "url": "https://www.moneytodaybd.com"
+    },
+    {
+        "name": "tradenewsbd.com",
+        "url": "https://www.tradenewsbd.com"
+    },
+    {
+        "name": "commercebd.com",
+        "url": "https://www.commercebd.com"
+    },
+    {
+        "name": "investornewsbd.com",
+        "url": "https://www.investornewsbd.com"
+    },
+    {
+        "name": "shareexpressbd.com",
+        "url": "https://www.shareexpressbd.com"
+    },
+    {
+        "name": "dsenews.com",
+        "url": "https://www.dsenews.com"
+    },
+    {
+        "name": "csenews.com.bd",
+        "url": "https://www.csenews.com.bd"
+    },
+    {
+        "name": "bankinfobd.com",
+        "url": "https://www.bankinfobd.com"
+    },
+    {
+        "name": "corporatenewsbd.com",
+        "url": "https://www.corporatenewsbd.com"
+    },
+    {
+        "name": "businessbengal.com",
+        "url": "https://www.businessbengal.com"
+    },
+    {
+        "name": "fintechbd.com",
+        "url": "https://www.fintechbd.com"
+    },
+    {
+        "name": "eximnewsbd.com",
+        "url": "https://www.eximnewsbd.com"
+    },
+    {
+        "name": "techshohor.com",
+        "url": "https://www.techshohor.com"
+    },
+    {
+        "name": "techtunes.co",
+        "url": "https://www.techtunes.co"
+    },
+    {
+        "name": "banglatech24.com",
+        "url": "https://www.banglatech24.com"
+    },
+    {
+        "name": "thedailycampus.com",
+        "url": "https://www.thedailycampus.com"
+    },
+    {
+        "name": "dainikshiksha.com",
+        "url": "https://www.dainikshiksha.com"
+    },
+    {
+        "name": "lawyersclubbangladesh.com",
+        "url": "https://www.lawyersclubbangladesh.com"
+    },
+    {
+        "name": "bdcrictime.com",
+        "url": "https://www.bdcrictime.com"
+    },
+    {
+        "name": "cricfrenzy.com",
+        "url": "https://www.cricfrenzy.com"
+    },
+    {
+        "name": "sportszonebd.com",
+        "url": "https://www.sportszonebd.com"
+    },
+    {
+        "name": "khela71.com",
+        "url": "https://www.khela71.com"
+    },
+    {
+        "name": "campuslive24.com",
+        "url": "https://www.campuslive24.com"
+    },
+    {
+        "name": "campustimes.press",
+        "url": "https://www.campustimes.press"
+    },
+    {
+        "name": "edunewsbd.com",
+        "url": "https://www.edunewsbd.com"
+    },
+    {
+        "name": "shikshabarta.com",
+        "url": "https://www.shikshabarta.com"
+    },
+    {
+        "name": "techzoom.tv",
+        "url": "https://www.techzoom.tv"
+    },
+    {
+        "name": "gizmobd.com",
+        "url": "https://www.gizmobd.com"
+    },
+    {
+        "name": "techbarta24.com",
+        "url": "https://www.techbarta24.com"
+    },
+    {
+        "name": "healthnewsbd.com",
+        "url": "https://www.healthnewsbd.com"
+    },
+    {
+        "name": "lawjusticebd.com",
+        "url": "https://www.lawjusticebd.com"
+    },
+    {
+        "name": "naribarta.com",
+        "url": "https://www.naribarta.com"
+    },
+    {
+        "name": "agriculturebd.com",
+        "url": "https://www.agriculturebd.com"
+    },
+    {
+        "name": "krishikhabar.com",
+        "url": "https://www.krishikhabar.com"
+    },
+    {
+        "name": "sportsbd24.com",
+        "url": "https://www.sportsbd24.com"
+    },
+    {
+        "name": "cricbd.com",
+        "url": "https://www.cricbd.com"
+    },
+    {
+        "name": "kheladhula.com",
+        "url": "https://www.kheladhula.com"
+    },
+    {
+        "name": "chakrirkhabar.com",
+        "url": "https://www.chakrirkhabar.com"
+    },
+    {
+        "name": "jobnewsbd.com",
+        "url": "https://www.jobnewsbd.com"
+    },
+    {
+        "name": "shikshasangbad.com",
+        "url": "https://www.shikshasangbad.com"
+    },
+    {
+        "name": "techworldbd.com",
+        "url": "https://www.techworldbd.com"
+    },
+    {
+        "name": "motornewsbd.com",
+        "url": "https://www.motornewsbd.com"
+    },
+    {
+        "name": "bbc.com",
+        "url": "https://www.bbc.com/bangla"
+    },
+    {
+        "name": "dw.com",
+        "url": "https://www.dw.com/bn"
+    },
+    {
+        "name": "voabangla.com",
+        "url": "https://www.voabangla.com"
+    },
+    {
+        "name": "benarnews.org",
+        "url": "https://www.benarnews.org/bengali"
+    },
+    {
+        "name": "thikana.net",
+        "url": "https://www.thikana.net"
+    },
+    {
+        "name": "deshebideshe.com",
+        "url": "https://www.deshebideshe.com"
+    },
+    {
+        "name": "bssnews.net",
+        "url": "https://www.bssnews.net"
+    },
+    {
+        "name": "unb.com.bd",
+        "url": "https://www.unb.com.bd"
+    },
+    {
+        "name": "parstoday.ir",
+        "url": "https://parstoday.ir/bn"
+    },
+    {
+        "name": "bangla.cri.cn",
+        "url": "https://bangla.cri.cn"
+    },
+    {
+        "name": "sbs.com.au",
+        "url": "https://www.sbs.com.au/language/bengali"
+    },
+    {
+        "name": "anandabazar.com",
+        "url": "https://www.anandabazar.com"
+    },
+    {
+        "name": "kolkata24x7.in",
+        "url": "https://www.kolkata24x7.in"
+    },
+    {
+        "name": "zeenews.india.com",
+        "url": "https://zeenews.india.com/bengali"
+    },
+    {
+        "name": "sangbadpratidin.in",
+        "url": "https://www.sangbadpratidin.in"
+    },
+    {
+        "name": "eisamay.com",
+        "url": "https://eisamay.com"
+    },
+    {
+        "name": "bengali.news18.com",
+        "url": "https://bengali.news18.com"
+    },
+    {
+        "name": "probashbangla.com",
+        "url": "https://www.probashbangla.com"
+    },
+    {
+        "name": "deshvideshnews.com",
+        "url": "https://www.deshvideshnews.com"
+    }
+];
+
+    function sortResults() {
+      const resultsDiv = document.getElementById("results");
+      const children = Array.from(resultsDiv.children);
+      children.sort((a, b) => {
+        const getOrder = (el) => {
+          if (el.classList.contains("allowed")) return 0;
+          if (el.classList.contains("testing")) return 1;
+          if (el.classList.contains("blocked")) return 2;
+          return 3;
+        };
+        return getOrder(a) - getOrder(b);
+      });
+      children.forEach((child) => resultsDiv.appendChild(child));
+    }
+
+    async function testCORS(source, index) {
+      const resultEl = document.getElementById(`result-${index}`);
+      if (!resultEl) return;
+      resultEl.className = "result testing";
+      resultEl.innerHTML = `<span class="status">${source.name}:</span> Testing...`;
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const response = await fetch(source.url, {
+          method: "HEAD",
+          mode: "cors",
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        resultEl.className = "result allowed";
+        resultEl.innerHTML = `<span class="status">${source.name}:</span> ✓ CORS Allowed (${response.status})<div class="url">${source.url}</div>`;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        resultEl.className = "result blocked";
+        resultEl.innerHTML = `<span class="status">${source.name}:</span> ✗ CORS Blocked<div class="url">${source.url}</div>`;
+      } finally {
+        sortResults();
+      }
+    }
+
+    function testAllSources() {
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      newsSources.forEach((source, index) => {
+        const div = document.createElement("div");
+        div.id = `result-${index}`;
+        div.className = "result";
+        resultsDiv.appendChild(div);
+        testCORS(source, index);
+      });
+    }
+
+    function clearResults() {
+      document.getElementById("results").innerHTML = "";
+    }
+
+    // Auto-test on page load
+    window.addEventListener("load", testAllSources);
+  </script>
+</body>
+</html>

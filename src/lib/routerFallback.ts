@@ -10,6 +10,8 @@ export function handleRouteFallback(rawUrl: string): { rewriteUrl: string | null
     return { rewriteUrl: '/DEEF/index.html', is404: false };
   } else if (normalizedUrl === '/ipa' || normalizedUrl === '/ipa/' || normalizedUrl === '/ipa/index.html') {
     return { rewriteUrl: '/IPA/index.html', is404: false };
+  } else if (normalizedUrl === '/cors' || normalizedUrl === '/cors/' || normalizedUrl === '/cors/index.html') {
+    return { rewriteUrl: '/CORS/index.html', is404: false };
   } else if (
     url === '/' ||
     url === '/index.html' ||
