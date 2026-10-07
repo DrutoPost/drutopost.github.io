@@ -15,14 +15,18 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [automationStatus, setAutomationStatus] = useState(() => getScopedItem('bg_automation_status') || 'IDLE');
+  const [theme, setTheme] = useState(() => getScopedItem('bg_theme') || 'day');
 
   useEffect(() => {
     const handleStorage = () => {
       setAutomationStatus(getScopedItem('bg_automation_status') || 'IDLE');
+      setTheme(getScopedItem('bg_theme') || 'day');
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
+
+  const logoSrc = (currentPage === 'home' && theme === 'day') ? '/logo.png' : '/darklogo.png';
 
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
@@ -38,12 +42,20 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
 
   return (
     <>
-      {/* Mobile Header - Always Black as requested */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 bg-black border-b border-zinc-800 flex items-center justify-between px-6 z-50">
+      {/* Mobile Header */}
+      <div className={cn(
+        "lg:hidden fixed top-0 left-0 right-0 h-20 border-b flex items-center justify-between px-6 z-50 transition-colors",
+        currentPage === 'home' && theme === 'day' ? "bg-white border-zinc-200 text-black" : "bg-black border-zinc-800 text-white"
+      )}>
         <div className="flex items-center">
-          <img src="/darklogo.png" alt="Drutopost" className="h-10 w-auto object-contain" />
+          <img src={logoSrc} alt="Drutopost" className="h-10 w-auto object-contain" />
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className="text-white hover:bg-white/10">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(currentPage === 'home' && theme === 'day' ? "text-black hover:bg-black/10" : "text-white hover:bg-white/10")}
+        >
           {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
         </Button>
       </div>
@@ -62,8 +74,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-8 hidden lg:flex items-center justify-center xl:justify-start">
-          <img src="/darklogo.png" alt="Drutopost" className="h-10 w-auto object-contain lg:hidden xl:block" />
-          <img src="/darklogo.png" alt="Drutopost" className="h-8 w-auto object-contain hidden lg:block xl:hidden" />
+          <div className={cn("p-2 rounded-lg transition-colors inline-block", currentPage === 'home' && theme === 'day' ? "bg-white" : "")}>
+            <img src={logoSrc} alt="Drutopost" className="h-10 w-auto object-contain lg:hidden xl:block" />
+            <img src={logoSrc} alt="Drutopost" className="h-8 w-auto object-contain hidden lg:block xl:hidden" />
+          </div>
         </div>
 
         <nav className="flex-1 px-4 space-y-3 mt-24 lg:mt-6">

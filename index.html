@@ -50,7 +50,8 @@
   --max: 1180px;
   --grid: rgba(255, 255, 255, 0.04);
   --font-main: Bahnschrift, "Avenir Next", Inter, system-ui, sans-serif;
-  --font-bn: 'Anek Bangla', 'Hind Siliguri', 'Inter', sans-serif;
+  --font-bn-heading: 'Hind Siliguri', sans-serif;
+  --font-bn-body: 'Anek Bangla', sans-serif;
   font-family: var(--font-main);
   color: var(--text);
   background: var(--bg);
@@ -76,7 +77,31 @@
 }
 
 [data-lang="bn"] {
-  font-family: var(--font-bn);
+  font-family: var(--font-bn-body);
+}
+
+[data-lang="bn"] h1,
+[data-lang="bn"] h2,
+[data-lang="bn"] h3,
+[data-lang="bn"] h4,
+[data-lang="bn"] h5,
+[data-lang="bn"] h6,
+[data-lang="bn"] h1 *,
+[data-lang="bn"] h2 *,
+[data-lang="bn"] h3 *,
+[data-lang="bn"] h4 *,
+[data-lang="bn"] h5 *,
+[data-lang="bn"] h6 *,
+[data-lang="bn"] .eyebrow {
+  font-family: var(--font-bn-heading);
+}
+
+[data-lang="bn"] p,
+[data-lang="bn"] span,
+[data-lang="bn"] button,
+[data-lang="bn"] a,
+[data-lang="bn"] label {
+  font-family: var(--font-bn-body);
 }
 
 * { box-sizing: border-box; }
@@ -129,10 +154,6 @@ p { color: var(--muted); line-height: 1.7; }
   width: auto;
   object-fit: contain;
   display: block;
-}
-[data-theme="light"] .brand-logo,
-[data-theme="light"] .footer-logo {
-  filter: invert(1) hue-rotate(180deg);
 }
 
 .navlinks { display: flex; gap: 22px; margin-left: auto; }
@@ -264,8 +285,23 @@ h1 em, h2 em { font-family: Georgia, serif; font-weight: 400; color: var(--text-
 .connector { height: 18px; border-left: 1px dashed var(--muted); margin-left: 17px; }
 
 /* Features */
-.center { text-align: center; }
-.center p { max-width: 560px; margin: 12px auto; }
+.heading.center {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 0;
+}
+.heading.center > div {
+  text-align: left;
+  max-width: 600px;
+}
+.heading.center p {
+  max-width: 600px;
+  margin: 12px 0 0 0;
+  text-align: left;
+}
 .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 45px; }
 .feature { background: var(--card-bg); border: 1px solid var(--card-border); padding: 21px; min-height: 205px; position: relative; transition: .25s; border-radius: 8px; }
 .feature svg { color: var(--text); }
@@ -470,7 +506,6 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
       <button onclick="scrollToId('workflow')" data-en="How it works" data-bn="কাজ করার পদ্ধতি">How it works</button>
       <button onclick="scrollToId('features')" data-en="Features" data-bn="বৈশিষ্ট্যসমূহ">Features</button>
       <button onclick="scrollToId('roi')" data-en="ROI Calculator" data-bn="সাশ্রয় ক্যালকুলেটর">ROI Calculator</button>
-      <button onclick="scrollToId('roadmap')" data-en="Roadmap" data-bn="রোডম্যাপ">Roadmap</button>
       <button onclick="scrollToId('faq')" data-en="FAQ" data-bn="প্রশ্নোত্তর">FAQ</button>
     </nav>
 
@@ -488,9 +523,9 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
   <section class="section hero">
     <div>
       <div class="eyebrow" data-en="<i></i>NEWSROOM AUTOMATION" data-bn="<i></i>নিউজ রুম অটোমেশন"><i></i>NEWSROOM AUTOMATION</div>
-      <h1 data-en="Turn breaking news into <em>publish-ready</em> photocards."
-          data-bn="ব্রেকিং নিউজকে রূপান্তর করুন <em>রেডি-টু-পোস্ট</em> ফটোপোস্টে।">
-        Turn breaking news into <em>publish-ready</em> photocards.
+      <h1 data-en="From published article to branded photocard in <em>under ten seconds</em>."
+          data-bn="প্রকাশিত আর্টিকেল থেকে ব্র্যান্ডেড ফটোপোস্ট <em>দশ সেকেন্ডের কম সময়ে</em>।">
+        From published article to branded photocard in <em>under ten seconds</em>.
       </h1>
       <p data-en="Drutopost monitors your newsroom, fetches article data, moderates headlines and generates branded social graphics — so your team can move from story to social in seconds."
          data-bn="দ্রুতপোস্ট আপনার নিউজ রুম পর্যবেক্ষণ করে, আর্টিকেল ডেটা গ্রহণ করে, হেডলাইন মডারেট করে এবং কয়েক সেকেন্ডের মধ্যে ব্র্যান্ডেড ফটোপোস্ট তৈরি করে।">
@@ -729,21 +764,6 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
     </div>
   </section>
 
-  <!-- Roadmap -->
-  <section class="section" id="roadmap">
-    <div class="heading">
-      <div>
-        <div class="eyebrow" data-en="WHERE IT GOES NEXT" data-bn="ভবিষ্যত পরিকল্পনা">WHERE IT GOES NEXT</div>
-        <h2 data-en="Automation is the starting point." data-bn="অটোমেশন কেবল শুরু।">Automation is the starting point.</h2>
-      </div>
-      <p data-en="The current workflow is designed to expand from assisted production into a broader publishing engine."
-         data-bn="আমাদের ফিচার ভবিষ্যতে আরও সমৃদ্ধ হবে।">
-        The current workflow is designed to expand from assisted production into a broader publishing engine.
-      </p>
-    </div>
-    <div class="road" id="road"></div>
-  </section>
-
   <!-- FAQ Section -->
   <section class="section faqsection" id="faq">
     <div>
@@ -822,8 +842,14 @@ function toggleTheme() {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', currentTheme);
   const themeBtn = document.getElementById('themeBtn');
-  themeBtn.innerHTML = currentTheme === 'dark' ? `<i data-lucide="sun"></i>` : `<i data-lucide="moon"></i>`;
-  lucide.createIcons();
+  if (themeBtn) {
+    themeBtn.innerHTML = currentTheme === 'dark' ? `<i data-lucide="sun"></i>` : `<i data-lucide="moon"></i>`;
+  }
+  const logoSrc = currentTheme === 'dark' ? '/darklogo.png' : '/logo.png';
+  document.querySelectorAll('.brand-logo, .footer-logo').forEach(img => {
+    img.src = logoSrc;
+  });
+  if (window.lucide) lucide.createIcons();
 }
 
 /* Language Management */
@@ -911,29 +937,6 @@ const featureDataList = [
   }
 ];
 
-const roadmapList = [
-  {
-    en: ['01', 'Direct URL parsing', 'Paste an article URL and extract its content directly.'],
-    bn: ['01', 'ইউআরএল পার্সার', 'যেকোনো সংবাদের লিংক পেস্ট করেই কার্ড তৈরি।']
-  },
-  {
-    en: ['02', 'Auto-publishing', 'Connect the generated asset to social channels for automated publishing.'],
-    bn: ['02', 'স্বয়ংক্রিয় পাবলিশিং', 'ফেসবুক ও সোশাল মিডিয়ায় সরাসরি কার্ড পোস্ট।']
-  },
-  {
-    en: ['03', 'LLM content analysis', 'Use intelligent content analysis for richer moderation and editorial assistance.'],
-    bn: ['03', 'এআই কন্টেন্ট বিশ্লেষণ', 'স্মার্ট মডারেশন ও এডিটোরিয়াল সহায়তা।']
-  },
-  {
-    en: ['04', 'Auto-highlighting', 'Automatically emphasize important headline phrases.'],
-    bn: ['04', 'স্বয়ংক্রিয় হাইলাইট', 'মূল শব্দগুলোকে স্বয়ংক্রিয়ভাবে হাইলাইট করা।']
-  },
-  {
-    en: ['05', 'Quotation cards', 'Generate specialized quotation photocards for editorial moments.'],
-    bn: ['05', 'উক্তি কার্ড', 'বিশেষ বার্তার জন্য পৃথক কিউটেশন কার্ড লেআউট।']
-  }
-];
-
 const faqList = [
   {
     en: ['Does Drutopost replace our social media team?', 'No. It removes repetitive production work so your team can spend more time on editorial decisions, publishing and audience management.'],
@@ -964,7 +967,6 @@ let activeStepIdx = 0;
 function render(){
   const steps = stepsData.map(item => item[currentLang]);
   const featureData = featureDataList.map(item => item[currentLang]);
-  const roadmap = roadmapList.map(item => item[currentLang]);
   const faq = faqList.map(item => item[currentLang]);
 
   document.getElementById('steps').innerHTML = steps.map((s,i) =>
@@ -982,17 +984,6 @@ function render(){
       ${icon(f[0])}
       <h3>${f[1]}</h3>
       <p>${f[2]}</p>
-    </div>`
-  ).join('');
-
-  document.getElementById('road').innerHTML = roadmap.map((r,i) =>
-    `<div class="roadrow">
-      <span>${r[0]}</span>
-      <div>
-        <h3>${r[1]}</h3>
-        <p>${r[2]}</p>
-      </div>
-      ${i < 4 ? icon('arrow-right') : ''}
     </div>`
   ).join('');
 
