@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DrutoPost — Newsroom Photocard Automation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --paper: #121214;
+    --paper-trans: rgba(18, 18, 20, 0.88);
+    --ink: #F2F1EC;
+    --ink-soft: #ACABA6;
+    --ink-faint: #6E6D69;
+    --red: #FF4A5C;
+    --red-deep: #D0021B;
+    --card: #1C1C20;
+    --card-accent: #25252b;
+    --line: rgba(255, 255, 255, 0.09);
+    --grid: rgba(255, 255, 255, 0.04);
+    --font-d: 'Schibsted Grotesk', Arial, sans-serif;
+    --font-b: 'Inter', Arial, sans-serif;
+    --font-bn: 'Anek Bangla', 'Inter', sans-serif;
+  }
+
+  [data-theme="light"] {
+    --paper: #F7F6F2;
+    --paper-trans: rgba(247, 246, 242, 0.88);
+    --ink: #16161A;
+    --ink-soft: #5B5A57;
+    --ink-faint: #9B9A95;
+    --red: #D0021B;
+    --red-deep: #8C0016;
+    --card: #FFFFFF;
+    --card-accent: #f0eee9;
+    --line: #E6E3DC;
+    --grid: rgba(20, 20, 18, 0.045);
+  }
+
+  [data-lang="bn"] {
+    --font-b: var(--font-bn);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-b);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 34px 34px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* Progress bar */
+  #prog { position: fixed; top: 0; left: 0; height: 3px; background: var(--red); width: 0%; z-index: 100; transition: width 0.1s; }
+
+  /* Header Navigation */
+  header {
+    position: sticky; top: 0;
+    background: var(--paper-trans);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    z-index: 40;
+    transition: background 0.3s ease;
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-d); font-weight: 700; font-size: 20px; border: 0; background: transparent; color: var(--ink); }
+  .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--red); display: grid; place-items: center; color: #fff; flex: none; }
+  
+  .navlinks { display: flex; align-items: center; gap: 24px; }
+  .navlinks button { background: none; border: 0; color: var(--ink-soft); font-size: 13.5px; font-weight: 500; transition: color 0.2s; }
+  .navlinks button:hover { color: var(--ink); }
+
+  .nav-controls { display: flex; align-items: center; gap: 12px; }
+  .toggle-btn {
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 7px 11px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+  .toggle-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-b); font-weight: 600; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 9px; border: 1px solid var(--ink);
+    white-space: nowrap; transition: all 0.2s ease;
+  }
+  .btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--ink-faint); }
+  .btn.onred { background: var(--paper); color: var(--red-deep); border-color: var(--paper); }
+
+  /* Hero Section */
+  .hero { padding: 80px 0 70px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center; }
+  .hero h1 { font-family: var(--font-d); font-weight: 700; font-size: clamp(2.2rem, 4.4vw, 3.4rem); line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 20px; }
+  .hero h1 em { font-family: Georgia, serif; font-weight: 400; font-style: italic; color: var(--ink-soft); }
+  .hero p { font-size: 16.5px; line-height: 1.6; color: var(--ink-soft); max-width: 48ch; margin: 0 0 28px; }
+  .hero-cta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .hero-proof { display: flex; gap: 16px; margin-top: 24px; font-size: 12px; color: var(--ink-faint); }
+  .hero-proof span { display: flex; align-items: center; gap: 6px; }
+  .hero-proof i { color: var(--red); width: 14px; height: 14px; }
+
+  /* Hero Stage Visual */
+  .stage { position: relative; height: 380px; display: grid; place-items: center; }
+  .orbit { position: absolute; border: 1px solid var(--line); border-radius: 50%; transform: rotate(-18deg); pointer-events: none; }
+  .o1 { width: 440px; height: 310px; }
+  .o2 { width: 330px; height: 440px; }
+  
+  .pc {
+    position: relative; width: 220px; border-radius: 16px; background: var(--card);
+    border: 1px solid var(--line); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+    padding: 14px; z-index: 3; transform: rotate(-2deg); transition: transform 0.3s ease;
+  }
+  .pc:hover { transform: rotate(0deg) scale(1.03); }
+  .pc .pctop { display: flex; justify-content: space-between; font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--ink-faint); margin-bottom: 8px; }
+  .pc .img { height: 130px; border-radius: 8px; background: var(--card-accent); margin-bottom: 12px; position: relative; overflow: hidden; }
+  .pc .img::before {
+    content: ""; position: absolute; inset: 12px;
+    background: linear-gradient(135deg, var(--ink-faint), transparent); opacity: 0.3;
+    clip-path: polygon(0 25%, 42% 0, 100% 24%, 84% 100%, 15% 78%);
+  }
+  .pc .tag { position: absolute; bottom: 8px; left: 8px; padding: 3px 6px; border-radius: 4px; background: var(--red); color: #fff; font-size: 8px; font-weight: 700; }
+  .pc .head { font-family: var(--font-d); font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; color: var(--ink); }
+  .pc .pcmeta { border-top: 1px solid var(--line); padding-top: 6px; display: flex; justify-content: space-between; font-size: 8px; color: var(--ink-faint); }
+
+  .stat-badge {
+    position: absolute; z-index: 5; display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--line); padding: 10px 14px;
+    border-radius: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  }
+  .stat-badge i { color: var(--red); width: 18px; height: 18px; }
+  .stat-badge b { display: block; font-size: 13px; line-height: 1.1; }
+  .stat-badge small { font-size: 10px; color: var(--ink-faint); }
+  .sb-1 { top: 40px; left: 10px; }
+  .sb-2 { bottom: 40px; right: 10px; }
+
+  .sec-h { font-family: var(--font-d); font-weight: 700; font-size: clamp(1.6rem, 3.2vw, 2.2rem); margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sec-sub { color: var(--ink-soft); font-size: 15px; margin: 0 0 38px; max-width: 540px; }
+
+  /* Section Styles */
+  .section { padding: 76px 0; border-top: 1px solid var(--line); }
+
+  /* Ticker */
+  .ticker { border-block: 1px solid var(--line); color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-align: center; padding: 14px 0; font-size: 10px; letter-spacing: 3px; font-weight: 600; }
+  .ticker b { color: var(--red); padding: 0 16px; }
+
+  /* Problem Cards */
+  .problem-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; }
+  .p-card { background: var(--card); border: 1px solid var(--line); padding: 24px; border-radius: 12px; transition: transform 0.25s, border-color 0.25s; }
+  .p-card:hover { transform: translateY(-4px); border-color: var(--ink-faint); }
+  .p-icon { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); display: grid; place-items: center; color: var(--red); margin-bottom: 20px; }
+  .p-card h3 { font-family: var(--font-d); font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+  .p-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 0; }
+
+  /* Pipeline Interactive Workflow */
+  .wf-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; }
+  .steps-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .step-btn {
+    display: grid; grid-template-columns: 20px 30px 1fr; align-items: center; gap: 8px;
+    text-align: left; background: var(--card); color: var(--ink-soft); border: 1px solid var(--line);
+    padding: 14px; border-radius: 10px; transition: all 0.2s;
+  }
+  .step-btn:hover, .step-btn.active { background: var(--card-accent); border-color: var(--red); color: var(--ink); }
+  .step-btn .s-num { font-size: 10px; color: var(--ink-faint); font-weight: 600; }
+  .step-btn .s-ico { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--line); display: grid; place-items: center; }
+  .step-btn.active .s-ico { color: var(--red); border-color: var(--red); }
+  .step-btn .s-title { font-size: 13px; font-weight: 600; }
+
+  .wf-detail {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 28px;
+    display: flex; flex-direction: column; justify-content: space-between; position: relative; min-height: 280px;
+  }
+  .wf-detail .d-top { display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-faint); letter-spacing: 1px; font-weight: 600; }
+  .wf-detail .d-ico { color: var(--red); margin-top: 24px; }
+  .wf-detail h3 { font-family: var(--font-d); font-size: 28px; font-weight: 700; margin: 10px 0; }
+  .wf-detail p { font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin: 0; max-width: 480px; }
+  .wf-data { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 24px; display: flex; gap: 20px; font-size: 11px; }
+  .wf-data div { flex: 1; }
+  .wf-data span { color: var(--ink-faint); display: block; margin-bottom: 2px; }
+  .wf-data b { color: var(--ink); font-weight: 600; }
+
+  /* ROI Calculator */
+  .calc-container { display: grid; grid-template-columns: 1fr 1.1fr; gap: 44px; align-items: start; }
+  .calc-sliders { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+  .c-row { margin-bottom: 22px; }
+  .c-row:last-child { margin-bottom: 0; }
+  .c-label { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; margin-bottom: 8px; }
+  .c-label span { color: var(--ink-soft); }
+  .c-label b { color: var(--red); font-variant-numeric: tabular-nums; }
+  
+  input[type=range] {
+    width: 100%; -webkit-appearance: none; appearance: none; height: 5px;
+    border-radius: 3px; background: var(--line); outline: none; margin: 4px 0;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--red); cursor: pointer; border: 2px solid var(--paper);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--red);
+    cursor: pointer; border: 2px solid var(--paper);
+  }
+
+  .calc-results { display: flex; flex-direction: column; gap: 16px; }
+  .res-box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .res-box.primary-res { border-color: var(--red); background: color-mix(in srgb, var(--red) 6%, var(--card)); }
+  .res-box label { font-size: 12px; color: var(--ink-faint); font-weight: 600; display: block; margin-bottom: 6px; }
+  .res-box .big-val { font-family: var(--font-d); font-size: clamp(2rem, 3.8vw, 2.8rem); font-weight: 700; color: var(--red); line-height: 1; font-variant-numeric: tabular-nums; }
+  .res-box .sub-val { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+  .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* Features Grid */
+  .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .f-card { background: var(--card); border: 1px solid var(--line); padding: 20px; border-radius: 12px; position: relative; min-height: 180px; }
+  .f-card .f-num { position: absolute; right: 16px; top: 16px; font-size: 11px; color: var(--ink-faint); font-weight: 600; }
+  .f-card i { color: var(--red); width: 22px; height: 22px; margin-bottom: 28px; display: block; }
+  .f-card h3 { font-family: var(--font-d); font-size: 15px; font-weight: 600; margin: 0 0 6px; }
+  .f-card p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+
+  /* Features Tabs Showcase */
+  .tabs-container { margin-top: 40px; }
+  .tab-bar { display: flex; gap: 10px; margin-bottom: 28px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+  .tab-btn { background: none; border: 0; color: var(--ink-soft); font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 20px; transition: all 0.2s; }
+  .tab-btn.active { background: var(--ink); color: var(--paper); }
+
+  .tab-panel { display: none; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .tab-panel.active { display: grid; }
+  .tab-panel h3 { font-family: var(--font-d); font-size: 24px; font-weight: 700; margin: 0 0 12px; }
+  .tab-panel p { font-size: 15px; color: var(--ink-soft); line-height: 1.6; margin: 0; }
+
+  .tab-preview { height: 220px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); position: relative; display: grid; place-items: center; overflow: hidden; }
+
+  /* Roadmap List */
+  .road-list { border-top: 1px solid var(--line); margin-top: 20px; }
+  .road-item { display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: start; }
+  .road-item span { color: var(--red); font-weight: 700; font-size: 13px; }
+  .road-item h3 { font-family: var(--font-d); font-size: 16px; margin: 0 0 4px; font-weight: 600; }
+  .road-item p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
+  /* FAQ Accordion */
+  .faq-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 50px; }
+  .faq-list { border-top: 1px solid var(--line); }
+  .faq-item { border-bottom: 1px solid var(--line); }
+  .faq-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 18px 0; background: none; border: 0; color: var(--ink); font-size: 15px; font-weight: 600; text-align: left; }
+  .faq-btn i { color: var(--ink-faint); transition: transform 0.2s; }
+  .faq-item.open .faq-btn i { transform: rotate(180deg); color: var(--red); }
+  .faq-ans { display: none; padding-bottom: 18px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+  .faq-item.open .faq-ans { display: block; }
+
+  /* Bottom CTA Banner */
+  .cta-sec { background: var(--red); color: #fff; padding: 80px 0; text-align: center; border-radius: 20px; margin: 40px 0 60px; }
+  .cta-sec h2 { font-family: var(--font-d); font-weight: 700; font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 14px; }
+  .cta-sec p { font-size: 16px; opacity: 0.9; margin: 0 0 28px; }
+
+  /* Footer */
+  footer { padding: 32px 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links button { background: none; border: 0; color: var(--ink-soft); font-size: 13px; }
+  .footer-links button:hover { color: var(--ink); }
+
+  /* Modal Popup */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    z-index: 90; display: none; place-items: center; padding: 20px;
+  }
+  .modal-overlay.show { display: grid; }
+  .modal-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 20px;
+    padding: 36px; width: min(520px, 100%); position: relative; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .modal-close { position: absolute; right: 18px; top: 18px; background: none; border: 0; color: var(--ink-faint); padding: 6px; }
+  .modal-card h2 { font-family: var(--font-d); font-size: 28px; font-weight: 700; margin: 0 0 8px; }
+  .modal-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 22px; }
+  .modal-card form { display: grid; gap: 12px; }
+  .modal-card input, .modal-card textarea {
+    width: 100%; background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 14px; color: var(--ink); font-size: 13.5px; outline: none;
+  }
+  .modal-card input:focus, .modal-card textarea:focus { border-color: var(--red); }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; }
+    .stage { height: 320px; }
+    .problem-grid, .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .wf-grid, .calc-container, .tab-panel, .faq-grid { grid-template-columns: 1fr; }
+    .navlinks { display: none; }
+  }
+  @media (max-width: 580px) {
+    .problem-grid, .features-grid { grid-template-columns: 1fr; }
+    .steps-list { grid-template-columns: 1fr; }
+    .res-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<!-- Header -->
+<header>
+  <div class="wrap nav">
+    <button class="brand" onclick="scrollToSec('top')">
+      <span class="mark"><i data-lucide="zap"></i></span>
+      DrutoPost
+    </button>
+
+    <nav class="navlinks">
+      <button onclick="scrollToSec('workflow')" data-en="How it works" data-bn="কাজ করার পদ্ধতি">How it works</button>
+      <button onclick="scrollToSec('features')" data-en="Features" data-bn="বৈশিষ্ট্যসমূহ">Features</button>
+      <button onclick="scrollToSec('roi')" data-en="ROI Calculator" data-bn="সাশ্রয় ক্যালকুলেটর">ROI Calculator</button>
+      <button onclick="scrollToSec('roadmap')" data-en="Roadmap" data-bn="রোডম্যাপ">Roadmap</button>
+      <button onclick="scrollToSec('faq')" data-en="FAQ" data-bn="প্রশ্নোত্তর">FAQ</button>
+    </nav>
+
+    <div class="nav-controls">
+      <button class="toggle-btn" onclick="toggleLang()" id="langBtn">EN / বাংলা</button>
+      <button class="toggle-btn" onclick="toggleTheme()" id="themeBtn"><i data-lucide="sun"></i></button>
+      <button class="btn primary" onclick="openModal()" data-en="Book a Demo" data-bn="ডেমো বুক করুন">Book a Demo</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- Hero Section -->
+  <section class="wrap hero">
+    <div>
+      <h1 data-en="From published article to branded photocard in <em>seconds.</em>" data-bn="প্রকাশিত আর্টিকেলের সাথে সাথেই ব্র্যান্ডেড ফটোপোস্ট <em>মুহূর্তেই।</em>">
+        From published article to branded photocard in <em>seconds.</em>
+      </h1>
+      <p data-en="DrutoPost monitors your newsroom, fetches article data, moderates headlines, and generates ready-to-post social graphics instantly."
+         data-bn="দ্রুতপোস্ট আপনার নিউজ রুম পর্যবেক্ষণ করে, আর্টিকেল ডেটা গ্রহণ করে, হেডলাইন মডারেট করে এবং এক ক্লিকেই প্রস্তুত সোশাল গ্রাফিক্স তৈরি করে।">
+        DrutoPost monitors your newsroom, fetches article data, moderates headlines, and generates ready-to-post social graphics instantly.
+      </p>
+      <div class="hero-cta">
+        <button class="btn primary" onclick="openModal()" data-en="Book a Demo" data-bn="ডেমো বুক করুন">
+          Book a Demo <i data-lucide="arrow-right"></i>
+        </button>
+        <button class="btn ghost" onclick="scrollToSec('workflow')" data-en="See How It Works" data-bn="পদ্ধতি দেখুন">
+          See How It Works
+        </button>
+      </div>
+      <div class="hero-proof">
+        <span><i data-lucide="check"></i> 1080×1080 Output</span>
+        <span><i data-lucide="check"></i> Automated Moderation</span>
+        <span><i data-lucide="check"></i> Zero Design Delay</span>
+      </div>
+    </div>
+
+    <!-- Interactive Visual Stage -->
+    <div class="stage">
+      <div class="orbit o1"></div>
+      <div class="orbit o2"></div>
+
+      <div class="pc">
+        <div class="pctop"><span>DRUTOPOST</span><span>LIVE PIPELINE</span></div>
+        <div class="img"><span class="tag">BREAKING</span></div>
+        <div class="head">Headline arrives. Photocard follows in seconds.</div>
+        <div class="pcmeta"><span>NEWSROOM</span><span>JUST NOW</span></div>
+      </div>
+
+      <div class="stat-badge sb-1">
+        <i data-lucide="gauge"></i>
+        <div>
+          <b data-en="10 sec" data-bn="১০ সেক">10 sec</b>
+          <small data-en="generation target" data-bn="তৈরির লক্ষ্যমাত্রা">generation target</small>
+        </div>
+      </div>
+
+      <div class="stat-badge sb-2">
+        <i data-lucide="shield-check"></i>
+        <div>
+          <b data-en="Auto" data-bn="স্বয়ংক্রিয়">Auto</b>
+          <small data-en="headline moderation" data-bn="হেডলাইন মডারেশন">headline moderation</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    MONITOR <b>→</b> FETCH <b>→</b> MODERATE <b>→</b> GENERATE <b>→</b> PUBLISH
+  </div>
+
+  <!-- Problem Section -->
+  <section class="wrap section">
+    <h2 class="sec-h" data-en="Every article shouldn't slow down your team." data-bn="প্রতিটি সংবাদ প্রকাশের পর ডিজাইনের বিলম্ব দূর করুন">Every article shouldn't slow down your team.</h2>
+    <p class="sec-sub" data-en="Manual photocard creation creates production bottlenecks." data-bn="ম্যানুয়াল কার্ড ডিজাইনে সময় নষ্ট হয় এবং ভুলের ঝুঁকি থেকে যায়।">Manual photocard creation creates production bottlenecks.</p>
+    
+    <div class="problem-grid">
+      <div class="p-card">
+        <div class="p-icon"><i data-lucide="clock-3"></i></div>
+        <h3 data-en="Time Drain" data-bn="সময়ের অপচয়">Time Drain</h3>
+        <p data-en="Designing cards manually consumes precious editorial hours." data-bn="ম্যানুয়ালি কার্ড তৈরিতে প্রতিদিন অনেক গুরুত্বপূর্ণ সময় নষ্ট হয়।">Designing cards manually consumes precious editorial hours.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-icon"><i data-lucide="mouse-pointer-2"></i></div>
+        <h3 data-en="Constant Checking" data-bn="অনবরত নজরদারি">Constant Checking</h3>
+        <p data-en="Designers constantly check the site for new articles." data-bn="নতুন সংবাদের জন্য বার বার ওয়েবসাইট রিফ্রেশ করে বসে থাকতে হয়।">Designers constantly check the site for new articles.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-icon"><i data-lucide="shield-alert"></i></div>
+        <h3 data-en="Human Error" data-bn="ভুলের ঝুঁকি">Human Error</h3>
+        <p data-en="Manual copy-pasting increases risk of sensitive typos." data-bn="দ্রুত কপি-পেস্ট করতে গিয়ে বানান ও তথ্যের ভুল থেকে যায়।">Manual copy-pasting increases risk of sensitive typos.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-icon"><i data-lucide="layers-3"></i></div>
+        <h3 data-en="Brand Drift" data-bn="ব্র্যান্ড অসঙ্গতি">Brand Drift</h3>
+        <p data-en="Inconsistent fonts and layouts across different designers." data-bn="ভিন্ন ভিন্ন ডিজাইনারের কারণে একই সংবাদের ডিজাইনে পার্থক্য তৈরি হয়।">Inconsistent fonts and layouts across different designers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pipeline Section -->
+  <section class="wrap section" id="workflow">
+    <h2 class="sec-h" data-en="One automated pipeline, start to finish." data-bn="একক স্বয়ংক্রিয় পাইপলাইন, শুরু থেকে শেষ পর্যন্ত।">One automated pipeline, start to finish.</h2>
+    <p class="sec-sub" data-en="Click through each stage of the newsroom process." data-bn="প্রতিটি ধাপের কার্যপ্রণালী দেখতে বাটনে ক্লিক করুন।">Click through each stage of the newsroom process.</p>
+
+    <div class="wf-grid">
+      <div class="steps-list" id="stepsList"></div>
+      <div class="wf-detail">
+        <div class="d-top"><span id="wfStepTag">STEP 01 / 05</span><span>ACTIVE PIPELINE</span></div>
+        <div class="d-ico" id="wfIcon"><i data-lucide="refresh-cw"></i></div>
+        <h3 id="wfTitle">Monitor</h3>
+        <p id="wfDesc">Watches your newsroom site and catches new articles the moment they go live.</p>
+        <div class="wf-data">
+          <div><span>INPUT</span><b id="wfInput">PUBLISHED URL</b></div>
+          <div><span>OUTPUT</span><b id="wfOutput">TRIGGER EVENT</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROI Calculator Section -->
+  <section class="wrap section" id="roi">
+    <h2 class="sec-h" data-en="Calculate your newsroom savings" data-bn="আপনার সময় ও খরচ সাশ্রয় হিসাব করুন">Calculate your newsroom savings</h2>
+    <p class="sec-sub" data-en="Adjust the sliders below to model monthly time and money savings in BDT." data-bn="আপনার নিউজ রুমের প্রতিদিনের কাজের তথ্য স্লাইড করে সাশ্রয় দেখুন।">Adjust the sliders below to model monthly time and money savings in BDT.</p>
+
+    <div class="calc-container">
+      <div class="calc-sliders">
+        <div class="c-row">
+          <div class="c-label"><span data-en="Articles published daily" data-bn="দৈনিক প্রকাশিত আর্টিকেলের সংখ্যা">Articles published daily</span><b id="v_art">40</b></div>
+          <input type="range" id="s_art" min="5" max="150" value="40">
+        </div>
+        <div class="c-row">
+          <div class="c-label"><span data-en="Time to make 1 photocard (min)" data-bn="১টি কার্ড তৈরিতে সময় (মিনিট)">Time to make 1 photocard (min)</span><b id="v_cardTime">9 min</b></div>
+          <input type="range" id="s_cardTime" min="2" max="30" value="9">
+        </div>
+        <div class="c-row">
+          <div class="c-label"><span data-en="Designer working hours / day" data-bn="ডিজাইনারের দৈনিক কর্মঘণ্টা">Designer working hours / day</span><b id="v_workHrs">8 hrs</b></div>
+          <input type="range" id="s_workHrs" min="4" max="12" value="8">
+        </div>
+        <div class="c-row">
+          <div class="c-label"><span data-en="Designer monthly salary (BDT)" data-bn="ডিজাইনারের মাসিক বেতন (টাকা)">Designer monthly salary (BDT)</span><b id="v_salary">৳35,000</b></div>
+          <input type="range" id="s_salary" min="15000" max="120000" step="1000" value="35000">
+        </div>
+      </div>
+
+      <div class="calc-results">
+        <div class="res-box primary-res">
+          <label data-en="ESTIMATED MONTHLY MONEY SAVED" data-bn="মাসিক আনুমানিক টাকা সাশ্রয়">ESTIMATED MONTHLY MONEY SAVED</label>
+          <div class="big-val" id="r_moneySaved">৳23,625</div>
+          <div class="sub-val" data-en="Direct reduction in design overhead cost" data-bn="ডিজাইন বাবদ সরাসরি খরচ হ্রাস">Direct reduction in design overhead cost</div>
+        </div>
+
+        <div class="res-grid">
+          <div class="res-box">
+            <label data-en="TIME SAVED / MONTH" data-bn="মাসিক সাশ্রয়কৃত সময়">TIME SAVED / MONTH</label>
+            <div class="big-val" style="font-size: 1.8rem;" id="r_timeSaved">172 hrs</div>
+            <div class="sub-val" id="r_manualVsAuto">Manual: 180h | Auto: 8h</div>
+          </div>
+          <div class="res-box">
+            <label data-en="EQUIVALENT DESIGNERS" data-bn="সমপরিমাণ ডিজাইনার সক্ষমতা">EQUIVALENT DESIGNERS</label>
+            <div class="big-val" style="font-size: 1.8rem;" id="r_designerEquiv">0.9 FTE</div>
+            <div class="sub-val" data-en="Capacity freed for high-value tasks" data-bn="উচ্চমানের কাজে ব্যবহারের সুযোগ">Capacity freed for high-value tasks</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid & Interactive Showcase -->
+  <section class="wrap section" id="features">
+    <h2 class="sec-h" data-en="Built for modern digital newsrooms" data-bn="আধুনিক ডিজিটাল নিউজ রুমের জন্য তৈরি">Built for modern digital newsrooms</h2>
+    <p class="sec-sub" data-en="Everything you need to maintain branding without editorial delays." data-bn="ব্র্যান্ড বজায় রেখে সময় বাঁচানোর প্রয়োজনীয় সুবিধা।">Everything you need to maintain branding without editorial delays.</p>
+
+    <div class="features-grid" id="featuresGrid"></div>
+
+    <div class="tabs-container">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="setTab(0)" data-en="Brand Consistency" data-bn="ব্র্যান্ডের ধারাবাহিকতা">Brand Consistency</button>
+        <button class="tab-btn" onclick="setTab(1)" data-en="Live Customization" data-bn="লাইভ এডিটিং">Live Customization</button>
+        <button class="tab-btn" onclick="setTab(2)" data-en="Headline Moderation" data-bn="হেডলাইন মডারেশন">Headline Moderation</button>
+      </div>
+
+      <div class="tab-panel active" id="tp-0">
+        <div>
+          <h3 data-en="Template locked. Every card matches." data-bn="টেমপ্লেট লক করা, প্রতিটি কার্ড হবে নিখুঁত।">Template locked. Every card matches.</h3>
+          <p data-en="Your exact colors, fonts, logo positioning, and layout rules are enforced automatically. No designer intervention required."
+             data-bn="আপনার ফন্ট, লোগো, এবং কালার স্কিম নির্দিষ্ট করা থাকে। ফলে ডিজাইনার ছাড়াই প্রতিটি পোস্ট শতভাগ ব্র্যান্ডেড হয়।">
+            Your exact colors, fonts, logo positioning, and layout rules are enforced automatically. No designer intervention required.
+          </p>
+        </div>
+        <div class="tab-preview">
+          <div style="font-weight: 700; color: var(--red); display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="lock"></i> Template Rules Enforced
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tp-1">
+        <div>
+          <h3 data-en="See it before it goes live." data-bn="পাবলিশ করার আগেই কার্ডের প্রিভিউ দেখুন।">See it before it goes live.</h3>
+          <p data-en="Adjust headline text or swap images on the fly with real-time visual previews before downloading or posting."
+             data-bn="ইমেজ পরিবর্তন বা শিরোনাম পরিমার্জন করুন রিয়েল-টাইম প্রিভিউ সহকারে।">
+            Adjust headline text or swap images on the fly with real-time visual previews before downloading or posting.
+          </p>
+        </div>
+        <div class="tab-preview">
+          <div style="display: flex; align-items: center; gap: 8px; color: var(--ink);">
+            <i data-lucide="eye"></i> Live Editor Preview
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tp-2">
+        <div>
+          <h3 data-en="Automated safety checks." data-bn="হেডলাইন নিরাপত্তা স্বয়ংক্রিয় চেক।">Automated safety checks.</h3>
+          <p data-en="Filter restricted phrases, check word boundaries, and ensure compliance before assets are generated."
+             data-bn="সংবেদনশীল শব্দ স্বয়ংক্রিয়ভাবে ফিল্টার হয়ে নিরাপদ পোস্ট তৈরি হয়।">
+            Filter restricted phrases, check word boundaries, and ensure compliance before assets are generated.
+          </p>
+        </div>
+        <div class="tab-preview">
+          <div style="display: flex; align-items: center; gap: 8px; color: #1a8a4a;">
+            <i data-lucide="shield-check"></i> Sensitive Words Filtered
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap Section -->
+  <section class="wrap section" id="roadmap">
+    <h2 class="sec-h" data-en="Upcoming Roadmap" data-bn="আগামী দিনের পরিকল্পনা">Upcoming Roadmap</h2>
+    <p class="sec-sub" data-en="Where DrutoPost is heading next." data-bn="আমাদের ভবিষ্যতের পরিকল্পনা ও আপডেট।">Where DrutoPost is heading next.</p>
+    
+    <div class="road-list" id="roadList"></div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="wrap section" id="faq">
+    <div class="faq-grid">
+      <div>
+        <h2 class="sec-h" data-en="Frequently Asked Questions" data-bn="সাধারণ জিজ্ঞাসা">Frequently Asked Questions</h2>
+        <p class="sec-sub" data-en="Have questions? Here are answers to common newsroom inquiries." data-bn="আপনার মনে প্রশ্ন আছে? এখানে উত্তর জেনে নিন।">Have questions? Here are answers to common newsroom inquiries.</p>
+      </div>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="wrap">
+    <div class="cta-sec">
+      <h2 data-en="Give your newsroom its time back." data-bn="আপনার টিমকে সময় বাঁচিয়ে কাজে মনোযোগ দিতে দিন">Give your newsroom its time back.</h2>
+      <p data-en="Book a short call to see DrutoPost run on your actual newsroom articles." data-bn="আপনার সংবাদপত্রের বাস্তব আর্টিকেলে দ্রুতপোস্ট লাইভ দেখতে এখনই বুক করুন।">Book a short call to see DrutoPost run on your actual newsroom articles.</p>
+      <button class="btn onred" onclick="openModal()" data-en="Book a Demo" data-bn="ডেমো বুক করুন">
+        Book a Demo <i data-lucide="arrow-right"></i>
+      </button>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap footer-inner">
+    <span>&copy; 2026 DrutoPost</span>
+    <div class="footer-links">
+      <button onclick="scrollToSec('workflow')">Workflow</button>
+      <button onclick="scrollToSec('features')">Features</button>
+      <button onclick="scrollToSec('roi')">ROI</button>
+      <button onclick="openModal()">Contact</button>
+    </div>
+  </div>
+</footer>
+
+<!-- Book Demo Popup Modal -->
+<div class="modal-overlay" id="demoModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+    <h2 data-en="Book a Demo" data-bn="ডেমো বুক করুন">Book a Demo</h2>
+    <p data-en="See DrutoPost generate photocards live on your news site." data-bn="আপনার ওয়েবসাইটের সংবাদের সাথে কীভাবে ডেমো কাজ করে দেখুন।">See DrutoPost generate photocards live on your news site.</p>
+
+    <form id="demoForm">
+      <input type="text" required placeholder="Your Name" id="p_name">
+      <input type="email" required placeholder="Work Email" id="p_email">
+      <input type="text" placeholder="News Organization Website (e.g. news.com)" id="p_site">
+      <textarea rows="3" placeholder="Any specific feature you want to test?" id="p_notes"></textarea>
+      <button type="submit" class="btn primary" style="justify-content: center;" data-en="Submit Request" data-bn="রিকোয়েস্ট জমা দিন">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  /* Navigation scroll progress */
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    document.getElementById('prog').style.width = pct + '%';
+  });
+
+  function scrollToSec(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* Theme Toggle */
+  let currentTheme = 'dark';
+  function toggleTheme() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    const icon = currentTheme === 'dark' ? 'sun' : 'moon';
+    document.getElementById('themeBtn').innerHTML = `<i data-lucide="${icon}"></i>`;
+    lucide.createIcons();
+  }
+
+  /* Language Toggle */
+  let currentLang = 'en';
+  function toggleLang() {
+    currentLang = currentLang === 'en' ? 'bn' : 'en';
+    document.documentElement.setAttribute('data-lang', currentLang);
+    
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const text = el.getAttribute(`data-${currentLang}`);
+      if (text) {
+        if (el.children.length === 0 || el.tagName === 'BUTTON') {
+          // If it contains icons, preserve icon rendering
+          const icon = el.querySelector('i');
+          el.innerHTML = text + (icon ? ' ' + icon.outerHTML : '');
+        } else {
+          el.innerHTML = text;
+        }
+      }
+    });
+
+    renderWorkflow();
+    renderFeatures();
+    renderRoadmap();
+    renderFAQ();
+    calcROI();
+    lucide.createIcons();
+  }
+
+  /* Data definitions for dynamic rendering & translation */
+  const workflowData = [
+    {
+      en: { title: 'Monitor', desc: 'Watches your newsroom site and catches new articles the moment they go live.', in: 'PUBLISHED URL', out: 'TRIGGER EVENT' },
+      bn: { title: 'মনিটর', desc: 'ওয়েবসাইট সর্বক্ষণ স্ক্যান করে নতুন সংবাদের আপডেট সঙ্গে সঙ্গে গ্রহণ করে।', in: 'প্রকাশিত লিঙ্ক', out: 'ট্রিগার ইভেন্ট' },
+      icon: 'refresh-cw'
+    },
+    {
+      en: { title: 'Fetch', desc: 'Pulls headline, cover image, and metadata directly from article.', in: 'ARTICLE DATA', out: 'RAW METADATA' },
+      bn: { title: 'ফেচ', desc: 'সংবাদের শিরোনাম, মূল ছবি এবং অন্যান্য প্রয়োজনীয় তথ্য সংগ্রহ করে।', in: 'সংবাদের ডেটা', out: 'মেটাডেটা' },
+      icon: 'newspaper'
+    },
+    {
+      en: { title: 'Moderate', desc: 'Checks headline safety rules and filters restricted words before rendering.', in: 'RAW HEADLINE', out: 'CLEAN COPY' },
+      bn: { title: 'মডারেশন', desc: 'শিরোনামের নিরাপত্তা ও বানান স্বয়ংক্রিয়ভাবে চেক করা হয়।', in: 'মূল শিরোনাম', out: 'ফিল্টারকৃত কপি' },
+      icon: 'shield-check'
+    },
+    {
+      en: { title: 'Generate', desc: 'Renders 1080×1080 branded photocard with your font and template.', in: 'CLEAN COPY', out: '1080x1080 PNG' },
+      bn: { title: 'জেনারেট', desc: 'আপনার নির্দিষ্ট ফন্ট ও ডিজাইন টেমপ্লেটে কার্ড তৈরি হয়।', in: 'সংশোধিত বার্তা', out: '১০৮০x১০৮০ ছবি' },
+      icon: 'file-image'
+    },
+    {
+      en: { title: 'Publish', desc: 'Ready in queue to download or post directly to social media.', in: 'PHOTOCARD', out: 'SOCIAL POST' },
+      bn: { title: 'পাবলিশ', desc: 'সোশাল মিডিয়ায় ডাউনলোডের বা শেয়ারের জন্য প্রস্তুত থাকে।', in: 'ফটোপোস্ট', out: 'সোশাল পোস্ট' },
+      icon: 'upload'
+    }
+  ];
+
+  let currentWfStep = 0;
+  function renderWorkflow() {
+    const list = document.getElementById('stepsList');
+    list.innerHTML = workflowData.map((item, i) => {
+      const langData = item[currentLang];
+      return `
+        <button class="step-btn ${i === currentWfStep ? 'active' : ''}" onclick="setWfStep(${i})">
+          <span class="s-num">0${i+1}</span>
+          <span class="s-ico"><i data-lucide="${item.icon}"></i></span>
+          <span class="s-title">${langData.title}</span>
+        </button>
+      `;
+    }).join('');
+    setWfStep(currentWfStep);
+  }
+
+  function setWfStep(idx) {
+    currentWfStep = idx;
+    const item = workflowData[idx];
+    const langData = item[currentLang];
+    
+    document.querySelectorAll('.step-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+    document.getElementById('wfStepTag').textContent = `STEP 0${idx+1} / 05`;
+    document.getElementById('wfTitle').textContent = langData.title;
+    document.getElementById('wfDesc').textContent = langData.desc;
+    document.getElementById('wfInput').textContent = langData.in;
+    document.getElementById('wfOutput').textContent = langData.out;
+    document.getElementById('wfIcon').innerHTML = `<i data-lucide="${item.icon}"></i>`;
+    lucide.createIcons();
+  }
+
+  const featuresList = [
+    { en: { title: 'Instant Engine', desc: 'Generate photocards in under 10 seconds per article.' }, bn: { title: 'দ্রুত প্রসেসিং', desc: '১০ সেকেন্ডের কম সময়ে পোস্ট প্রস্তুত।' }, icon: 'zap' },
+    { en: { title: 'Text Moderation', desc: 'Automatically check and swap flagged sensitive words.' }, bn: { title: 'টেক্সট ফিল্টারিং', desc: 'সংবেদনশীল শব্দের স্বয়ংক্রিয় ফিল্টার।' }, icon: 'shield-check' },
+    { en: { title: 'Crisp Canvas Engine', desc: 'High resolution 1080×1080 pixel PNG outputs.' }, bn: { title: 'এইচডি রেজোলিউশন', desc: 'হাই-কোয়ালিটি ১০৮০×১০৮০ পিক্সেল আউটপুট।' }, icon: 'file-image' },
+    { en: { title: 'Live Customization', desc: 'Adjust headline alignment or swap images live.' }, bn: { title: 'লাইভ প্রিভিউ', desc: 'পাবলিশ করার আগেই সম্পাদনা করার সুবিধা।' }, icon: 'sparkles' },
+    { en: { title: 'Alert System', desc: 'Notify team in real time when assets are ready.' }, bn: { title: 'তাৎক্ষণিক এলার্ট', desc: 'পোস্ট প্রস্তুত হলে টিমকে সংকেত প্রদান।' }, icon: 'bell' },
+    { en: { title: 'Ads & Variants', desc: 'Support ad integration and multi-layout templates.' }, bn: { title: 'বিজ্ঞাপন যুক্তকরণ', desc: 'বিজ্ঞাপন ও একাধিক লেআউটের সুবিধা।' }, icon: 'layers-3' },
+    { en: { title: 'Cross Platform', desc: 'Works seamless across desktop browsers and tablets.' }, bn: { title: 'ক্রস প্ল্যাটফর্ম', desc: 'মোবাইল ও পিসিতে নির্বিঘ্নে ব্যবহারের সুবিধা।' }, icon: 'code-2' },
+    { en: { title: 'High Volume Ready', desc: 'Scales easily during major breaking news days.' }, bn: { title: 'উচ্চ সক্ষমতা', desc: 'ব্রেকিং নিউজের দিনগুলোতে নিরবচ্ছিন্ন সার্ভিস।' }, icon: 'trending-up' }
+  ];
+
+  function renderFeatures() {
+    const grid = document.getElementById('featuresGrid');
+    grid.innerHTML = featuresList.map((item, i) => {
+      const data = item[currentLang];
+      return `
+        <div class="f-card">
+          <span class="f-num">0${i+1}</span>
+          <i data-lucide="${item.icon}"></i>
+          <h3>${data.title}</h3>
+          <p>${data.desc}</p>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function setTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  }
+
+  const roadmapData = [
+    { en: { title: 'Direct URL Parser', desc: 'Paste any news article link to extract content manually.' }, bn: { title: 'ইউআরএল পার্সার', desc: 'যেকোনো সংবাদের লিংক পেস্ট করেই কার্ড তৈরি।' } },
+    { en: { title: 'Auto-Social Publishing', desc: 'Directly publish approved cards to Facebook and Instagram pages.' }, bn: { title: 'স্বয়ংক্রিয় পাবলিশিং', desc: 'ফেসবুক পেজে সরাসরি কার্ড পোস্ট।' } },
+    { en: { title: 'AI Highlight Assistance', desc: 'Intelligently emphasize key quotes in long headlines.' }, bn: { title: 'এআই হাইলাইটার', desc: 'মূল উক্তিগুলোকে স্বয়ংক্রিয়ভাবে হাইলাইট করা।' } }
+  ];
+
+  function renderRoadmap() {
+    const list = document.getElementById('roadList');
+    list.innerHTML = roadmapData.map((item, i) => {
+      const data = item[currentLang];
+      return `
+        <div class="road-item">
+          <span>0${i+1}</span>
+          <div>
+            <h3>${data.title}</h3>
+            <p>${data.desc}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const faqData = [
+    {
+      en: { q: 'Does DrutoPost replace our graphics team?', a: 'No. It eliminates repetitive card production so your design team can focus on creative editorial graphics.' },
+      bn: { q: 'দ্রুতপোস্ট কি গ্রাফিক ডিজাইনারের বিকল্প?', a: 'না, এটি শুধুমাত্র দৈনন্দিন পুনরাবৃত্তিমূলক কার্ড তৈরির সময় বাঁচায় যাতে ডিজাইনার গুরুত্বপূর্ণ কাজে মনোযোগ দিতে পারেন।' }
+    },
+    {
+      en: { q: 'Can we use our exact custom fonts and colors?', a: 'Yes. The system enforces your newsroom font styling, logo placements, and color schemes.' },
+      bn: { q: 'আমরা কি নিজস্ব ব্র্যান্ড ফন্ট ও কালার ব্যবহার করতে পারব?', a: 'হ্যাঁ, আপনার পছন্দমত ফন্ট, লোগো এবং কালার টেমপ্লেটে সিস্টেম তৈরি করা হয়।' }
+    },
+    {
+      en: { q: 'How does the ROI calculation work?', a: 'Calculations estimate designer hours saved using manual vs 10-second automated card creation and converts it into BDT labor value.' },
+      bn: { q: 'সাশ্রয় হিসাবটি কীভাবে করা হয়?', a: 'ম্যানুয়াল সময় এবং ১০ সেকেন্ডের স্বয়ংক্রিয় সিস্টেমের সময়ের পার্থক্য হিসাব করে মাসিক টাকায় ফলাফল দেখানো হয়।' }
+    }
+  ];
+
+  function renderFAQ() {
+    const list = document.getElementById('faqList');
+    list.innerHTML = faqData.map((item, i) => {
+      const data = item[currentLang];
+      return `
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(${i})">
+            <span>${data.q}</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="faq-ans">${data.a}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleFaq(idx) {
+    const items = document.querySelectorAll('.faq-item');
+    items[idx].classList.toggle('open');
+  }
+
+  /* Interactive 4-Slider ROI Calculator Logic */
+  const s_art = document.getElementById('s_art');
+  const s_cardTime = document.getElementById('s_cardTime');
+  const s_workHrs = document.getElementById('s_workHrs');
+  const s_salary = document.getElementById('s_salary');
+
+  function calcROI() {
+    const art = +s_art.value;
+    const cardTime = +s_cardTime.value;
+    const workHrs = +s_workHrs.value;
+    const salary = +s_salary.value;
+
+    document.getElementById('v_art').textContent = art;
+    document.getElementById('v_cardTime').textContent = cardTime + ' min';
+    document.getElementById('v_workHrs').textContent = workHrs + ' hrs';
+    document.getElementById('v_salary').textContent = '৳' + salary.toLocaleString('en-US');
+
+    // Monthly calculations (30 days)
+    const monthlyArticles = art * 30;
+    const manualMinutes = monthlyArticles * cardTime;
+    const autoMinutes = monthlyArticles * (10 / 60); // 10 seconds automated
+
+    const manualHours = Math.round(manualMinutes / 60);
+    const autoHours = Math.round(autoMinutes / 60);
+    const hoursSaved = Math.max(0, manualHours - autoHours);
+
+    // Money savings calculation formula: (manual workflow / designer daily working hours) * (salary / 30)
+    const dailyManualHours = (art * cardTime) / 60;
+    const designerEquivalent = dailyManualHours / workHrs;
+    const monthlyMoneySaved = Math.round(designerEquivalent * salary);
+
+    document.getElementById('r_timeSaved').textContent = hoursSaved + (currentLang === 'bn' ? ' ঘণ্টা' : ' hrs');
+    document.getElementById('r_manualVsAuto').textContent = currentLang === 'bn' 
+      ? `ম্যানুয়াল: ${manualHours}ঘণ্টা | অটো: ${autoHours}ঘণ্টা`
+      : `Manual: ${manualHours}h | Auto: ${autoHours}h`;
+
+    document.getElementById('r_moneySaved').textContent = '৳' + monthlyMoneySaved.toLocaleString('en-US');
+    document.getElementById('r_designerEquiv').textContent = designerEquivalent.toFixed(1) + ' FTE';
+  }
+
+  [s_art, s_cardTime, s_workHrs, s_salary].forEach(input => input.addEventListener('input', calcROI));
+
+  /* Demo Modal Logic */
+  function openModal() {
+    document.getElementById('demoModal').classList.add('show');
+    lucide.createIcons();
+  }
+  function closeModal() {
+    document.getElementById('demoModal').classList.remove('show');
+  }
+
+  document.getElementById('demoModal').addEventListener('click', (e) => {
+    if (e.target.id === 'demoModal') closeModal();
+  });
+
+  document.getElementById('demoForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert(currentLang === 'bn' ? 'আপনার রিকোয়েস্ট সফলভাবে জমা হয়েছে!' : 'Demo request submitted successfully!');
+    closeModal();
+  });
+
+  /* Initial Render */
+  renderWorkflow();
+  renderFeatures();
+  renderRoadmap();
+  renderFAQ();
+  calcROI();
+  lucide.createIcons();
+</script>
+</body>
+</html>
