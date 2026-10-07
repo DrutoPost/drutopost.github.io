@@ -824,14 +824,13 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
        data-bn="আপনার নিউজরুমের প্রয়োজনীয়তা আমাদের জানান।">
       Tell us where your current newsroom workflow slows down. We'll use it to shape the demo around your process.
     </p>
-    <form id="demoForm">
-      <input required placeholder="Name">
-      <input required type="email" placeholder="Work email">
-      <input placeholder="News organization">
-      <textarea rows="4" placeholder="What would you like to automate?"></textarea>
+    <form id="demoForm" action="https://formspree.io/f/mkjojngn" method="POST">
+      <input required name="name" placeholder="Name">
+      <input required type="email" name="email" placeholder="Work email">
+      <input name="organization" placeholder="News organization">
+      <textarea name="message" rows="4" placeholder="What would you like to automate?"></textarea>
       <button class="primary" type="submit" data-en="Request demo" data-bn="রিকোয়েস্ট পাঠান">Request demo <i data-lucide="arrow-right"></i></button>
     </form>
-    <small class="note">Frontend-ready form. Connect the submit handler to your email, CRM or backend endpoint.</small>
   </div>
 </div>
 
@@ -1081,12 +1080,6 @@ function closeModal(){
 
 document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') closeModal();
-});
-
-document.getElementById('demoForm').addEventListener('submit', e => {
-  e.preventDefault();
-  alert(currentLang === 'bn' ? 'আপনার রিকোয়েস্ট জমা হয়েছে।' : 'Demo request captured. Connect this form to your email/CRM endpoint.');
-  closeModal();
 });
 
 // Initial Render
