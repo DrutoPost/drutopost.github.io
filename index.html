@@ -13,6 +13,16 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
 <link rel="apple-touch-icon" href="/icon-192.png" />
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S66G195S02"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S66G195S02');
+</script>
+
 <!-- Fonts: Bangla font support & English typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,12 +116,23 @@ p { color: var(--muted); line-height: 1.7; }
 }
 .brand {
   display: flex; align-items: center; gap: 9px; border: 0; background: none;
-  color: var(--text-heading); font-weight: 900; font-size: 20px; letter-spacing: -1px;
+  padding: 0;
 }
-.brand b { color: var(--red); }
-.mark {
-  display: grid; place-items: center; width: 29px; height: 29px;
-  border-radius: 8px; background: var(--red); color: #fff;
+.brand-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+.footer-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+[data-theme="light"] .brand-logo,
+[data-theme="light"] .footer-logo {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 .navlinks { display: flex; gap: 22px; margin-left: auto; }
@@ -358,37 +379,81 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
   .navlinks { gap: 15px; }
 }
 @media(max-width: 650px) {
-  .navin { height: 64px; }
-  .navlinks { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--card-bg); border-bottom: 1px solid var(--line); padding: 12px 24px; flex-direction: column; }
+  .navin { height: 64px; padding: 0 16px; justify-content: space-between; }
+  .nav-controls { margin-left: auto; gap: 8px; }
+  .brand-logo { height: 28px; }
+  .toggle-btn { padding: 6px 9px; font-size: 10px; }
+  .navlinks {
+    display: none;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 45;
+  }
+  .navlinks button {
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+  }
+  .navlinks button:last-child { border-bottom: 0; }
   .navlinks.open { display: flex; }
-  .menu { display: block; }
-  .cta { margin-left: auto; padding: 9px 11px; }
+  .menu { display: flex; align-items: center; justify-content: center; padding: 6px; }
+  .cta { padding: 8px 10px; font-size: 10px; }
   .cta svg { display: none; }
-  .section { padding: 78px 20px; }
-  .hero { padding-top: 52px; }
-  .hero h1 { font-size: 44px; }
-  .heroart { height: 405px; }
-  .pcard { width: 245px; height: 365px; }
-  .pcimg { height: 165px; }
-  .pchead { font-size: 21px; }
-  .o1 { width: 350px; }
-  .o2 { width: 285px; }
-  .s1 { left: 0; }
-  .s2 { right: 0; }
-  .problemgrid, .features { grid-template-columns: 1fr; }
+  .section { padding: 56px 16px; }
+  .hero { padding-top: 36px; min-height: auto; gap: 32px; }
+  .hero h1 { font-size: 36px; letter-spacing: -1.2px; }
+  .hero p { font-size: 15px; margin: 18px 0; }
+  .heroart { height: 380px; overflow: hidden; }
+  .pcard { width: 230px; height: 340px; padding: 12px; }
+  .pcimg { height: 150px; }
+  .pchead { font-size: 18px; }
+  .o1 { width: 310px; height: 220px; }
+  .o2 { width: 240px; height: 330px; }
+  .stat { padding: 8px 10px; }
+  .stat b { font-size: 11px; }
+  .stat small { font-size: 8px; }
+  .s1 { left: 4px; top: 120px; }
+  .s2 { right: 4px; bottom: 80px; }
+  .problemgrid, .features { grid-template-columns: 1fr; gap: 10px; }
+  .card, .feature { min-height: auto; padding: 18px; }
   .steps { grid-template-columns: 1fr; }
-  .heading { display: block; }
-  .heading>p { margin-top: 17px; }
-  .detail { min-height: 370px; }
-  .data { position: relative; right: auto; bottom: auto; margin-top: 28px; }
-  .results { grid-template-columns: 1fr; }
+  .heading { display: block; margin-bottom: 28px; }
+  .heading>p { margin-top: 12px; }
+  .detail { min-height: auto; padding: 20px 16px; }
+  .detailicon { margin-top: 24px; }
+  .detail h3 { font-size: 26px; }
+  .data { position: relative; right: auto; bottom: auto; margin-top: 20px; width: 100%; }
+  .roi { padding: 24px 16px; margin-top: 24px; }
+  .calc { padding: 18px 14px; }
+  .results { grid-template-columns: 1fr; gap: 8px; }
   .mainres, .value { grid-column: auto; }
-  .window { width: 330px; }
-  .canvas { width: 220px; height: 220px; }
-  .cphoto { height: 100px; }
-  .footer { flex-wrap: wrap; }
-  .footerlinks { margin-left: 0; order: 3; width: 100%; }
-  .footerbrand small { display: none; }
+  .mainres strong { font-size: 32px; }
+  .mini b { font-size: 18px; }
+  .visual { gap: 28px; }
+  .canvaswrap { min-height: 380px; }
+  .window { width: 100%; max-width: 310px; }
+  .canvas { width: 200px; height: 200px; padding: 10px; }
+  .cphoto { height: 85px; }
+  .canvas h3 { font-size: 17px; }
+  .chip { padding: 6px 9px; font-size: 8px; }
+  .ch1 { left: 2px; top: 10px; }
+  .ch2 { right: 2px; bottom: 10px; }
+  .roadrow { grid-template-columns: 36px 1fr 14px; padding: 16px 0; }
+  .roadrow h3 { font-size: 15px; }
+  .faqrow button { font-size: 14px; padding: 15px 0; }
+  .final { padding: 60px 16px; }
+  .final h2 { font-size: 36px; }
+  .footer { padding: 24px 16px 36px; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .footerlinks { margin-left: 0; width: 100%; justify-content: flex-start; gap: 16px; }
+  .footerbrand small { display: block; margin-left: 0; margin-top: 4px; }
 }
 </style>
 </head>
@@ -397,8 +462,8 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
 
 <header class="nav">
   <div class="navin">
-    <button class="brand" onclick="scrollToId('top')">
-      <span class="mark"><i data-lucide="zap"></i></span>druto<b>post</b>
+    <button class="brand" onclick="scrollToId('top')" aria-label="Drutopost">
+      <img src="/darklogo.png" alt="Drutopost" class="brand-logo" />
     </button>
 
     <nav class="navlinks" id="navlinks">
@@ -717,8 +782,7 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
 
 <footer class="footer">
   <div class="footerbrand">
-    <span class="mark"><i data-lucide="zap"></i></span>
-    <b>drutopost</b>
+    <img src="/darklogo.png" alt="Drutopost" class="footer-logo" />
     <small data-en="Newsroom photocard automation." data-bn="নিউজ রুম ফটোপোস্ট অটোমেশন">Newsroom photocard automation.</small>
   </div>
   <div class="footerlinks">
