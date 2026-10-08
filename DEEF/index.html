@@ -11,7 +11,7 @@
     gtag('config', 'G-S66G195S02');
   </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Drutopost - Newsroom Photocard Automation.</title>
     <meta name="description" content="Create your news photocards with our automation software. Lightning speed." />
     <link rel="manifest" href="/manifest.json" />
@@ -36,19 +36,6 @@
     <meta name="twitter:image" content="/Logoicon.svg" />
 
     <script>
-      // Zoom Lock
-      document.addEventListener('wheel', function(e) {
-        if (e.ctrlKey) {
-          e.preventDefault();
-        }
-      }, { passive: false });
-
-      document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && (e.key === '=' || e.key === '-' || e.key === '0' || e.key === '+')) {
-          e.preventDefault();
-        }
-      });
-
       // Copy Lock
       document.addEventListener('copy', (e) => {
         e.clipboardData.setData('text/plain', 'Copying text is restricted.');

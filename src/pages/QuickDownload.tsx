@@ -110,9 +110,9 @@ const QuickDownload: React.FC<QuickDownloadProps> = ({ contentId }) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-foreground">
-      <div className="w-full max-w-md space-y-8 bg-card/50 backdrop-blur-xl p-8 rounded-3xl border border-border shadow-2xl text-center">
+      <div className="w-full max-w-md space-y-8 bg-card/50 backdrop-blur-xl p-8 rounded-none border border-border shadow-2xl text-center">
         <div className="flex flex-col items-center space-y-6">
-          <div className="p-4 bg-black rounded-2xl flex items-center justify-center">
+          <div className="p-4 bg-black rounded-none flex items-center justify-center">
             <img src="/darklogo.png" alt="Drutopost" className="h-10 w-auto object-contain" />
           </div>
 
@@ -126,7 +126,7 @@ const QuickDownload: React.FC<QuickDownloadProps> = ({ contentId }) => {
                 <p className="text-muted-foreground">{errorMsg}</p>
                 <button
                   onClick={() => window.location.href = '/'}
-                  className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-xl font-bold"
+                  className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-none font-bold"
                 >
                   Go to Dashboard
                 </button>

@@ -33,7 +33,7 @@ const Templates = () => {
             key={template.id}
             onClick={() => handleSelect(template.file)}
             className={cn(
-              "group bg-card border cursor-pointer overflow-hidden transition-all duration-300 rounded-xl",
+              "group bg-card border cursor-pointer overflow-hidden transition-all duration-300 rounded-none",
               selectedTemplate === template.file
                 ? "border-primary ring-1 ring-primary/20"
                 : "border-border hover:border-muted-foreground/30"

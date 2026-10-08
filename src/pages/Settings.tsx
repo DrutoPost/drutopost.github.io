@@ -141,7 +141,7 @@ const Settings = () => {
           type="button"
           onClick={() => onChange(opt.id)}
           className={cn(
-            "h-11 px-4 text-sm font-medium transition-all rounded-lg border text-left flex items-center justify-between",
+            "h-11 px-4 text-sm font-medium transition-all rounded-none border text-left flex items-center justify-between",
             value === opt.id
               ? "bg-primary/10 border-primary text-primary"
               : "bg-card border-border text-foreground hover:bg-muted/50"
@@ -155,14 +155,14 @@ const Settings = () => {
   );
 
   const SettingTile = ({ id, title, description, icon: Icon, children }: { id: string, title: string, description: string, icon: React.ElementType, children: React.ReactNode }) => (
-    <div className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300">
+    <div className="bg-card border border-border rounded-none overflow-hidden transition-all duration-300">
       <button
         type="button"
         onClick={() => toggleTile(id)}
         className="w-full flex items-center justify-between p-5 hover:bg-muted/50 transition-colors"
       >
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-primary border border-border">
+          <div className="w-10 h-10 bg-muted rounded-none flex items-center justify-center text-primary border border-border">
             <Icon className="w-5 h-5" />
           </div>
           <div className="text-left">
@@ -326,29 +326,29 @@ const Settings = () => {
             <div className="grid grid-cols-2 gap-6 pt-6 border-t border-border">
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Date X Offset</Label>
-                <Input type="number" value={dateXOffset} onChange={e => { setDateXOffset(Number(e.target.value)); saveSetting('bg_date_x_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-lg text-foreground" />
+                <Input type="number" value={dateXOffset} onChange={e => { setDateXOffset(Number(e.target.value)); saveSetting('bg_date_x_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-none text-foreground" />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Date Y Offset</Label>
-                <Input type="number" value={dateYOffset} onChange={e => { setDateYOffset(Number(e.target.value)); saveSetting('bg_date_y_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-lg text-foreground" />
+                <Input type="number" value={dateYOffset} onChange={e => { setDateYOffset(Number(e.target.value)); saveSetting('bg_date_y_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-none text-foreground" />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Image X Offset</Label>
-                <Input type="number" value={imageXOffset} onChange={e => { setImageXOffset(Number(e.target.value)); saveSetting('bg_image_x_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-lg text-foreground" />
+                <Input type="number" value={imageXOffset} onChange={e => { setImageXOffset(Number(e.target.value)); saveSetting('bg_image_x_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-none text-foreground" />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Image Y Offset</Label>
-                <Input type="number" value={imageYOffset} onChange={e => { setImageYOffset(Number(e.target.value)); saveSetting('bg_image_y_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-lg text-foreground" />
+                <Input type="number" value={imageYOffset} onChange={e => { setImageYOffset(Number(e.target.value)); saveSetting('bg_image_y_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-none text-foreground" />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Title X Offset</Label>
-                <Input type="number" value={titleXOffset} onChange={e => { setTitleXOffset(Number(e.target.value)); saveSetting('bg_title_x_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-lg text-foreground" />
+                <Input type="number" value={titleXOffset} onChange={e => { setTitleXOffset(Number(e.target.value)); saveSetting('bg_title_x_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-none text-foreground" />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Title Y Offset</Label>
-                <Input type="number" value={titleYOffset} onChange={e => { setTitleYOffset(Number(e.target.value)); saveSetting('bg_title_y_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-lg text-foreground" />
+                <Input type="number" value={titleYOffset} onChange={e => { setTitleYOffset(Number(e.target.value)); saveSetting('bg_title_y_offset', e.target.value); }} className="h-11 bg-card border-border text-xs rounded-none text-foreground" />
               </div>
             </div>
 
@@ -403,9 +403,9 @@ const Settings = () => {
               <div className="flex-1 w-full space-y-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Active Color</Label>
-                  <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border">
+                  <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-none border border-border">
                     <div
-                      className="w-10 h-10 rounded-lg border border-border shadow-sm shrink-0"
+                      className="w-10 h-10 rounded-none border border-border shadow-sm shrink-0"
                       style={{ backgroundColor: highlightColor }}
                     />
                     <div className="flex-1 min-w-0">
@@ -449,7 +449,7 @@ const Settings = () => {
                     <button
                       key={c}
                       type="button"
-                      className="aspect-square rounded-md border border-border hover:scale-110 transition-transform shadow-sm"
+                      className="aspect-square rounded-none border border-border hover:scale-110 transition-transform shadow-sm"
                       style={{ backgroundColor: c }}
                       onClick={() => { setHighlightColor(c); saveSetting('bg_highlight_color', c); }}
                     />
@@ -490,15 +490,15 @@ const Settings = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input placeholder="RESTRICTED WORD" value={newWord} onChange={e => setNewWord(e.target.value)} className="bg-card border-border h-11 text-sm rounded-lg text-foreground" />
+              <Input placeholder="RESTRICTED WORD" value={newWord} onChange={e => setNewWord(e.target.value)} className="bg-card border-border h-11 text-sm rounded-none text-foreground" />
               <div className="flex items-center justify-center"><ArrowRight className="w-4 h-4 text-muted-foreground/30 rotate-90 sm:rotate-0" /></div>
-              <Input placeholder="SAFE FORM" value={newReplacement} onChange={e => setNewReplacement(e.target.value)} className="bg-card border-border h-11 text-sm rounded-lg text-foreground" />
-              <Button className="h-11 w-full sm:w-11 shrink-0 rounded-lg" onClick={() => { if(!newWord || !newReplacement) return; setWordRestrictions({...wordRestrictions, [newWord]: newReplacement}); setNewWord(''); setNewReplacement(''); }}><Plus className="w-5 h-5" /></Button>
+              <Input placeholder="SAFE FORM" value={newReplacement} onChange={e => setNewReplacement(e.target.value)} className="bg-card border-border h-11 text-sm rounded-none text-foreground" />
+              <Button className="h-11 w-full sm:w-11 shrink-0 rounded-none" onClick={() => { if(!newWord || !newReplacement) return; setWordRestrictions({...wordRestrictions, [newWord]: newReplacement}); setNewWord(''); setNewReplacement(''); }}><Plus className="w-5 h-5" /></Button>
             </div>
 
             <div className="flex flex-col gap-2">
               {Object.entries(wordRestrictions).map(([word, rep]) => (
-                <div key={word} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-card border border-border group rounded-xl transition-all duration-200">
+                <div key={word} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-card border border-border group rounded-none transition-all duration-200">
                   <div className="flex-1 flex items-center gap-4 min-w-0">
                     <div className="shrink-0 flex items-center gap-3">
                       <span className="text-sm text-foreground whitespace-nowrap">{word}</span>
@@ -507,7 +507,7 @@ const Settings = () => {
                     <Input
                       value={rep}
                       onChange={e => setWordRestrictions({...wordRestrictions, [word]: e.target.value})}
-                      className="h-9 text-sm bg-muted border-border flex-1 rounded-lg min-w-[120px] text-foreground"
+                      className="h-9 text-sm bg-muted border-border flex-1 rounded-none min-w-[120px] text-foreground"
                     />
                   </div>
                   <Button
