@@ -80,11 +80,11 @@ const Ads = () => {
       <div className="space-y-4 lg:space-y-6">
         <div className="space-y-4">
           <Label className="text-sm   text-muted-foreground">Register New Campaign</Label>
-          <div className="space-y-4 bg-card border border-border p-6 rounded-xl">
+          <div className="space-y-4 bg-card border border-border p-6 rounded-none">
             {!previewData ? (
               <Button
                 variant="outline"
-                className="w-full h-24 border-dashed border-2 flex flex-col gap-2 text-sm font-bold   rounded-lg"
+                className="w-full h-24 border-dashed border-2 flex flex-col gap-2 text-sm font-bold   rounded-none"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="w-6 h-6" />
@@ -92,7 +92,7 @@ const Ads = () => {
               </Button>
             ) : (
               <div className="space-y-4 animate-in fade-in zoom-in duration-300">
-                <div className="relative aspect-[3/1] bg-muted border border-border rounded-lg overflow-hidden flex items-center justify-center">
+                <div className="relative aspect-[3/1] bg-muted border border-border rounded-none overflow-hidden flex items-center justify-center">
                   <img src={previewData} className="w-full h-full object-contain" alt="Preview" />
                   <Button
                     variant="ghost"
@@ -108,10 +108,10 @@ const Ads = () => {
                     placeholder="Campaign Name..."
                     value={newAdName}
                     onChange={e => setNewAdName(e.target.value)}
-                    className="bg-muted border-border h-12 text-xs font-bold   rounded-lg"
+                    className="bg-muted border-border h-12 text-xs font-bold   rounded-none"
                   />
                   <Button
-                    className="h-12 px-8 shrink-0 text-sm font-bold   gap-3 rounded-lg"
+                    className="h-12 px-8 shrink-0 text-sm font-bold   gap-3 rounded-none"
                     onClick={handleAddCampaign}
                   >
                     <Check className="w-4 h-4" />
@@ -138,7 +138,7 @@ const Ads = () => {
             key={ad.id}
             onClick={() => toggleSelect(ad.id)}
             className={cn(
-              "group bg-card border flex flex-col sm:flex-row items-stretch cursor-pointer transition-all duration-300 rounded-xl overflow-hidden",
+              "group bg-card border flex flex-col sm:flex-row items-stretch cursor-pointer transition-all duration-300 rounded-none overflow-hidden",
               selectedAdId === ad.id ? "border-primary ring-1 ring-primary/20" : "border-border hover:border-muted-foreground/30"
             )}
           >
@@ -171,7 +171,7 @@ const Ads = () => {
 
             <div className="sm:w-2/3 bg-muted flex items-center justify-center p-4">
               <div className="relative w-full h-full">
-                <img src={ad.data} alt={ad.name} className="w-full h-auto max-h-[300px] object-contain rounded-lg" />
+                <img src={ad.data} alt={ad.name} className="w-full h-auto max-h-[300px] object-contain rounded-none" />
                 {selectedAdId === ad.id && (
                   <div className="absolute -top-2 -right-2 bg-primary text-white p-1.5 border border-white">
                     <Check className="w-3 h-3" />

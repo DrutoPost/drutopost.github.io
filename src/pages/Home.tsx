@@ -564,7 +564,7 @@ const Home = () => {
     <div className="space-y-6 lg:space-y-8 animate-fade-in-up pb-20">
       {automationError && (
         <div className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-card border border-destructive/20 max-w-md w-full p-8 shadow-2xl rounded-3xl space-y-6 text-center">
+          <div className="bg-card border border-destructive/20 max-w-md w-full p-8 shadow-2xl rounded-none space-y-6 text-center">
             <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mx-auto mb-4">
               <Zap className="w-8 h-8" />
             </div>
@@ -575,7 +575,7 @@ const Home = () => {
               </p>
             </div>
             <Button
-              className="w-full h-12 rounded-xl font-bold bg-destructive hover:bg-destructive/90 text-white"
+              className="w-full h-12 rounded-none font-bold bg-destructive hover:bg-destructive/90 text-white"
               onClick={() => window.location.reload()}
             >
               <RefreshCw className="w-4 h-4 mr-2" />
@@ -587,7 +587,7 @@ const Home = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Automation Section (Moved to Left) */}
         <div className="space-y-4 lg:space-y-6 h-full">
-          <div className="bg-card p-5 lg:p-6 border border-border h-full flex flex-col space-y-4 rounded-xl">
+          <div className="bg-card p-5 lg:p-6 border border-border h-full flex flex-col space-y-4 rounded-none">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 <Zap className="w-4 h-4 text-primary" />
@@ -634,17 +634,17 @@ const Home = () => {
 
         {/* Manual Section (Moved to Right) */}
         <div className="space-y-4 lg:space-y-6">
-          <div className="bg-card p-5 lg:p-6 border border-border space-y-4 rounded-xl">
-            <div className="flex bg-muted p-1 border border-border mb-1 rounded-lg overflow-hidden">
+          <div className="bg-card p-5 lg:p-6 border border-border space-y-4 rounded-none">
+            <div className="flex bg-muted p-1 border border-border mb-1 rounded-none overflow-hidden">
               <button
                 onClick={() => setActiveTab('url')}
-                className={cn("flex-1 py-2 text-sm font-bold   transition-all rounded-md", activeTab === 'url' ? "bg-card text-primary border border-border" : "text-muted-foreground hover:text-foreground")}
+                className={cn("flex-1 py-2 text-sm font-bold   transition-all rounded-none", activeTab === 'url' ? "bg-card text-primary border border-border" : "text-muted-foreground hover:text-foreground")}
               >
                 Article URL
               </button>
               <button
                 onClick={() => setActiveTab('manual')}
-                className={cn("flex-1 py-2 text-sm font-bold   transition-all rounded-md", activeTab === 'manual' ? "bg-card text-primary border border-border" : "text-muted-foreground hover:text-foreground")}
+                className={cn("flex-1 py-2 text-sm font-bold   transition-all rounded-none", activeTab === 'manual' ? "bg-card text-primary border border-border" : "text-muted-foreground hover:text-foreground")}
               >
                 Text & Image
               </button>
@@ -657,8 +657,8 @@ const Home = () => {
                   <Button variant="ghost" size="sm" className="h-6 text-xs font-bold text-primary p-0 hover:bg-transparent" onClick={() => { navigator.clipboard.readText().then(setPostUrl); }}>Paste from Clipboard</Button>
                 </div>
                 <div className="flex gap-4">
-                  <Input value={postUrl} onChange={e => setPostUrl(e.target.value)} placeholder="https://channel24bd.tv/..." className="bg-muted/50 border-border h-12 text-sm rounded-xl" />
-                  <Button variant="destructive" className="h-12 w-12 shrink-0 rounded-xl" onClick={fetchPostData} disabled={isFetching || !postUrl}>{isFetching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <ChevronRight className="w-6 h-6" />}</Button>
+                  <Input value={postUrl} onChange={e => setPostUrl(e.target.value)} placeholder="https://channel24bd.tv/..." className="bg-muted/50 border-border h-12 text-sm rounded-none" />
+                  <Button variant="destructive" className="h-12 w-12 shrink-0 rounded-none" onClick={fetchPostData} disabled={isFetching || !postUrl}>{isFetching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <ChevronRight className="w-6 h-6" />}</Button>
                 </div>
               </div>
             ) : (
@@ -679,13 +679,13 @@ const Home = () => {
                   </div>
                 </div>
                 {uploadedImage && (
-                  <div className="flex items-center gap-4 p-4 bg-muted/50 border border-dashed border-border rounded-xl">
-                    <div className="w-12 h-12 bg-black shrink-0 rounded-lg overflow-hidden"><img src={uploadedImage} className="w-full h-full object-cover" alt="Uploaded Preview" /></div>
+                  <div className="flex items-center gap-4 p-4 bg-muted/50 border border-dashed border-border rounded-none">
+                    <div className="w-12 h-12 bg-black shrink-0 rounded-none overflow-hidden"><img src={uploadedImage} className="w-full h-full object-cover" alt="Uploaded Preview" /></div>
                     <div className="flex-1"><p className="text-sm font-bold   text-foreground">Local Image Loaded</p><p className="text-xs text-muted-foreground font-bold ">Ready for generation</p></div>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={clearUploadedImage}><X className="w-4 h-4" /></Button>
                   </div>
                 )}
-                <Button className="w-full h-14 font-bold text-xs   gap-3 rounded-xl" onClick={() => { generatePhotoCard(); }} disabled={isGenerating}>{isGenerating ? <RefreshCw className="animate-spin w-4 h-4" /> : <PenTool className="w-4 h-4" />} Create PhotoCard</Button>
+                <Button className="w-full h-14 font-bold text-xs   gap-3 rounded-none" onClick={() => { generatePhotoCard(); }} disabled={isGenerating}>{isGenerating ? <RefreshCw className="animate-spin w-4 h-4" /> : <PenTool className="w-4 h-4" />} Create PhotoCard</Button>
               </div>
             )}
           </div>
@@ -696,7 +696,7 @@ const Home = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 <Label className="text-sm   text-muted-foreground font-bold">Live Preview</Label>
               </div>
-              <div className="aspect-square bg-muted border border-border overflow-hidden flex items-center justify-center relative rounded-2xl">
+              <div className="aspect-square bg-muted border border-border overflow-hidden flex items-center justify-center relative rounded-none">
                 {previewUrl ? <img src={previewUrl} className="w-full h-full object-contain" alt="Live Preview" /> : <div className="text-muted-foreground flex flex-col items-center gap-3"><ImageIcon className="w-12 h-12 opacity-20" /><span className="text-xs font-bold  ">Rendering...</span></div>}
               </div>
             </div>
@@ -719,7 +719,7 @@ const Home = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
           {autoRecords.map(r => (
-            <div key={r.id} className="group bg-card border border-border overflow-hidden hover:border-primary transition-all duration-300 rounded-xl">
+            <div key={r.id} className="group bg-card border border-border overflow-hidden hover:border-primary transition-all duration-300 rounded-none">
               <div
                 className="aspect-square bg-muted overflow-hidden relative border-b border-border cursor-pointer"
                 onClick={() => {
@@ -770,7 +770,7 @@ const Home = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="flex-1 h-11 sm:h-10 border-border hover:bg-muted text-green-600 rounded-md"
+                    className="flex-1 h-11 sm:h-10 border-border hover:bg-muted text-green-600 rounded-none"
                     onClick={() => { const a=document.createElement('a'); a.download=`${r.title}.png`; a.href=r.previewUrl; a.click(); }}
                   >
                     <Download className="w-4 h-4 sm:w-4 sm:h-4" strokeWidth={2.5} />
@@ -779,7 +779,7 @@ const Home = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="flex-1 h-11 sm:h-10 border-border hover:bg-muted text-foreground/60 rounded-md"
+                    className="flex-1 h-11 sm:h-10 border-border hover:bg-muted text-foreground/60 rounded-none"
                     onClick={() => {
                       if (navigator.share) {
                         fetch(r.previewUrl).then(res => res.blob()).then(blob => {
@@ -798,7 +798,7 @@ const Home = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="flex-1 h-11 sm:h-10 border-border hover:bg-muted text-blue-600 rounded-md"
+                    className="flex-1 h-11 sm:h-10 border-border hover:bg-muted text-blue-600 rounded-none"
                     onClick={() => {
                       if (r.url && r.url !== 'manual') {
                         navigator.clipboard.writeText(r.url);
@@ -815,7 +815,7 @@ const Home = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="flex-1 h-11 sm:h-10 border-destructive/10 bg-destructive/5 hover:bg-destructive/10 text-destructive rounded-md"
+                    className="flex-1 h-11 sm:h-10 border-destructive/10 bg-destructive/5 hover:bg-destructive/10 text-destructive rounded-none"
                     onClick={() => { if(confirm('Delete generation?')) { deleteRecordDB(r.id); setAutoRecords(prev => prev.filter(x => x.id !== r.id)); } }}
                   >
                     <Trash2 className="w-4 h-4 sm:w-4 sm:h-4" strokeWidth={2.5} />
@@ -839,12 +839,12 @@ const Home = () => {
           onClick={() => setEditingRecord(null)}
         >
           <div
-            className="bg-card border border-border max-w-2xl w-full p-6 lg:p-8 shadow-2xl rounded-3xl space-y-6 animate-in zoom-in-95 duration-300 z-[60]"
+            className="bg-card border border-border max-w-2xl w-full p-6 lg:p-8 shadow-2xl rounded-none space-y-6 animate-in zoom-in-95 duration-300 z-[60]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <div className="w-10 h-10 bg-primary/10 rounded-none flex items-center justify-center text-primary">
                   <PenTool className="w-5 h-5" />
                 </div>
                 <div>
@@ -859,7 +859,7 @@ const Home = () => {
 
             <div className="space-y-4">
               <Label className="text-sm text-muted-foreground font-bold">Tap words to toggle highlight</Label>
-              <div className="p-6 bg-muted/30 rounded-2xl border border-border flex flex-wrap gap-2 leading-relaxed">
+              <div className="p-6 bg-muted/30 rounded-none border border-border flex flex-wrap gap-2 leading-relaxed">
                 {editingRecord.title.split(' ').map((word, idx) => (
                   <button
                     key={idx}
@@ -869,7 +869,7 @@ const Home = () => {
                       );
                     }}
                     className={cn(
-                      "px-3 py-1.5 rounded-lg text-lg font-medium transition-all",
+                      "px-3 py-1.5 rounded-none text-lg font-medium transition-all",
                       tempHighlights.includes(idx)
                         ? "bg-primary text-primary-foreground shadow-lg scale-105"
                         : "bg-card text-foreground border border-border hover:bg-muted hover:border-primary/30"
@@ -883,18 +883,18 @@ const Home = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-border">
               <Button
-                className="h-12 font-bold gap-2 rounded-xl shadow-lg shadow-primary/20"
+                className="h-12 font-bold gap-2 rounded-none shadow-lg shadow-primary/20"
                 onClick={handleEditSave}
                 disabled={isSavingEdit}
               >
                 {isSavingEdit ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                 Save Changes
               </Button>
-              <Button variant="outline" className="h-12 font-bold gap-2 rounded-xl" onClick={handleEditDownload}>
+              <Button variant="outline" className="h-12 font-bold gap-2 rounded-none" onClick={handleEditDownload}>
                 <Download className="w-4 h-4" />
                 Download
               </Button>
-              <Button variant="outline" className="h-12 font-bold gap-2 rounded-xl" onClick={handleEditShare}>
+              <Button variant="outline" className="h-12 font-bold gap-2 rounded-none" onClick={handleEditShare}>
                 <Share2 className="w-4 h-4" />
                 Share link
               </Button>

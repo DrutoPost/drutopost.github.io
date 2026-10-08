@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark" data-lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080808">
 <meta name="description" content="Drutopost — newsroom photocard automation for faster social publishing.">
 <title>Drutopost — Newsroom Photocard Automation</title>
@@ -417,6 +417,8 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
 @media(max-width: 650px) {
   .navin { height: 64px; padding: 0 16px; justify-content: space-between; }
   .nav-controls { margin-left: auto; gap: 8px; }
+  .nav-controls #themeBtn { display: none; }
+  .mobile-theme-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 8px 0; }
   .brand-logo { height: 28px; }
   .toggle-btn { padding: 6px 9px; font-size: 10px; }
   .navlinks {
@@ -507,6 +509,10 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
       <button onclick="scrollToId('features')" data-en="Features" data-bn="বৈশিষ্ট্যসমূহ">Features</button>
       <button onclick="scrollToId('roi')" data-en="ROI Calculator" data-bn="সাশ্রয় ক্যালকুলেটর">ROI Calculator</button>
       <button onclick="scrollToId('faq')" data-en="FAQ" data-bn="প্রশ্নোত্তর">FAQ</button>
+      <div class="mobile-theme-item">
+        <span data-en="Theme" data-bn="থিম" style="font-size:15px; font-weight:600; color:var(--text-heading);">Theme</span>
+        <button class="toggle-btn" onclick="toggleTheme()" id="mobileThemeBtn"><i data-lucide="sun"></i> Toggle Theme</button>
+      </div>
     </nav>
 
     <div class="nav-controls">
@@ -840,10 +846,12 @@ let currentTheme = 'dark';
 function toggleTheme() {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', currentTheme);
-  const themeBtn = document.getElementById('themeBtn');
-  if (themeBtn) {
-    themeBtn.innerHTML = currentTheme === 'dark' ? `<i data-lucide="sun"></i>` : `<i data-lucide="moon"></i>`;
-  }
+  const themeBtns = [document.getElementById('themeBtn'), document.getElementById('mobileThemeBtn')];
+  themeBtns.forEach(btn => {
+    if (btn) {
+      btn.innerHTML = currentTheme === 'dark' ? `<i data-lucide="sun"></i> Mode` : `<i data-lucide="moon"></i> Mode`;
+    }
+  });
   const logoSrc = currentTheme === 'dark' ? '/darklogo.png' : '/logo.png';
   document.querySelectorAll('.brand-logo, .footer-logo').forEach(img => {
     img.src = logoSrc;

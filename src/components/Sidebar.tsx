@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { cn } from "@/lib/utils";
-import { Home, Image as ImageIcon, Layout, Settings2, Menu, X } from "lucide-react";
+import { Home, Image as ImageIcon, Layout, Settings2, Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
-import { getScopedItem } from "@/lib/scopedStorage";
+import { getScopedItem, setScopedItem } from "@/lib/scopedStorage";
 
 export type PageId = 'home' | 'templates' | 'ads' | 'settings';
 
@@ -27,6 +27,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   }, []);
 
   const logoSrc = (currentPage === 'home' && theme === 'day') ? '/logo.png' : '/darklogo.png';
+
+  const toggleAppTheme = () => {
+    const nextTheme = theme === 'day' ? 'night' : 'day';
+    setTheme(nextTheme);
+    setScopedItem('bg_theme', nextTheme);
+    window.dispatchEvent(new Event('storage'));
+  };
 
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
@@ -74,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-8 hidden lg:flex items-center justify-center xl:justify-start">
-          <div className={cn("p-2 rounded-lg transition-colors inline-block", currentPage === 'home' && theme === 'day' ? "bg-white" : "")}>
+          <div className={cn("p-2 rounded-none transition-colors inline-block", currentPage === 'home' && theme === 'day' ? "bg-white" : "")}>
             <img src={logoSrc} alt="Drutopost" className="h-10 w-auto object-contain lg:hidden xl:block" />
             <img src={logoSrc} alt="Drutopost" className="h-8 w-auto object-contain hidden lg:block xl:hidden" />
           </div>
@@ -99,6 +106,17 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
               <span className="lg:hidden xl:block font-bold text-sm">{item.label}</span>
             </button>
           ))}
+
+          {/* Theme Toggle Button inside mobile drawer / sidebar */}
+          <div className="pt-4 border-t border-zinc-900 mt-4">
+            <button
+              onClick={toggleAppTheme}
+              className="w-full flex items-center gap-3 px-4 py-3.5 transition-all duration-200 text-zinc-400 hover:bg-zinc-900 hover:text-white"
+            >
+              {theme === 'day' ? <Moon className="w-6 h-6 shrink-0 text-amber-400" /> : <Sun className="w-6 h-6 shrink-0 text-amber-400" />}
+              <span className="lg:hidden xl:block font-bold text-sm">{theme === 'day' ? 'Night Mode' : 'Day Mode'}</span>
+            </button>
+          </div>
         </nav>
 
         <div className="p-6 border-t border-zinc-900 bg-zinc-950/50">
