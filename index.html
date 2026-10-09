@@ -386,10 +386,14 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
 .final h2 { font-size: clamp(43px, 6vw, 75px); line-height: .94; }
 .final p { max-width: 470px; margin: 18px auto 26px; }
 
-.footer { max-width: var(--max); margin: auto; border-top: 1px solid var(--line); padding: 28px 24px 45px; display: flex; align-items: center; gap: 25px; }
+.footer { max-width: var(--max); margin: auto; border-top: 1px solid var(--line); padding: 28px 24px 45px; display: flex; align-items: center; gap: 25px; flex-wrap: wrap; }
 .footerbrand { display: flex; align-items: center; gap: 8px; color: var(--text-heading); font-weight: 800; }
 .footerbrand small { color: var(--muted); font-size: 9px; margin-left: 5px; }
-.footerlinks { display: flex; gap: 17px; margin-left: auto; }
+.footer-contact { display: flex; align-items: center; gap: 18px; margin-left: auto; }
+.contact-item { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; transition: color 0.2s; }
+.contact-item:hover { color: var(--text-heading); }
+.contact-item svg { width: 14px; height: 14px; color: var(--red); shrink: 0; }
+.footerlinks { display: flex; gap: 17px; }
 .copy { color: var(--muted); font-size: 9px; }
 
 /* Modal */
@@ -417,8 +421,6 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
 @media(max-width: 650px) {
   .navin { height: 64px; padding: 0 16px; justify-content: space-between; }
   .nav-controls { margin-left: auto; gap: 8px; }
-  .nav-controls #themeBtn { display: none; }
-  .mobile-theme-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 8px 0; }
   .brand-logo { height: 28px; }
   .toggle-btn { padding: 6px 9px; font-size: 10px; }
   .navlinks {
@@ -489,7 +491,8 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
   .faqrow button { font-size: 14px; padding: 15px 0; }
   .final { padding: 60px 16px; }
   .final h2 { font-size: 36px; }
-  .footer { padding: 24px 16px 36px; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .footer { padding: 24px 16px 36px; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .footer-contact { margin-left: 0; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; }
   .footerlinks { margin-left: 0; width: 100%; justify-content: flex-start; gap: 16px; }
   .footerbrand small { display: block; margin-left: 0; margin-top: 4px; }
 }
@@ -509,10 +512,6 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
       <button onclick="scrollToId('features')" data-en="Features" data-bn="বৈশিষ্ট্যসমূহ">Features</button>
       <button onclick="scrollToId('roi')" data-en="ROI Calculator" data-bn="সাশ্রয় ক্যালকুলেটর">ROI Calculator</button>
       <button onclick="scrollToId('faq')" data-en="FAQ" data-bn="প্রশ্নোত্তর">FAQ</button>
-      <div class="mobile-theme-item">
-        <span data-en="Theme" data-bn="থিম" style="font-size:15px; font-weight:600; color:var(--text-heading);">Theme</span>
-        <button class="toggle-btn" onclick="toggleTheme()" id="mobileThemeBtn"><i data-lucide="sun"></i> Toggle Theme</button>
-      </div>
     </nav>
 
     <div class="nav-controls">
@@ -811,6 +810,16 @@ input[type=range] { width: 100%; accent-color: var(--red); margin-top: 9px; }
     <img src="/darklogo.png" alt="Drutopost" class="footer-logo" />
     <small data-en="Newsroom photocard automation." data-bn="নিউজ রুম ফটোপোস্ট অটোমেশন">Newsroom photocard automation.</small>
   </div>
+  <div class="footer-contact">
+    <a href="mailto:info@drutopost.site" class="contact-item">
+      <i data-lucide="mail"></i>
+      <span>info@drutopost.site</span>
+    </a>
+    <a href="tel:+8809697525039" class="contact-item">
+      <i data-lucide="phone"></i>
+      <span>+8809697525039</span>
+    </a>
+  </div>
   <div class="footerlinks">
     <button onclick="scrollToId('workflow')" data-en="Workflow" data-bn="ওয়ার্কফ্লো">Workflow</button>
     <button onclick="scrollToId('features')" data-en="Features" data-bn="ফিচারস">Features</button>
@@ -846,11 +855,9 @@ let currentTheme = 'dark';
 function toggleTheme() {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', currentTheme);
-  const themeBtns = [document.getElementById('themeBtn'), document.getElementById('mobileThemeBtn')];
+  const themeBtns = [document.getElementById('themeBtn'), document.getElementById('mobileThemeBtn')].filter(Boolean);
   themeBtns.forEach(btn => {
-    if (btn) {
-      btn.innerHTML = currentTheme === 'dark' ? `<i data-lucide="sun"></i> Mode` : `<i data-lucide="moon"></i> Mode`;
-    }
+    btn.innerHTML = currentTheme === 'dark' ? `<i data-lucide="sun"></i>` : `<i data-lucide="moon"></i>`;
   });
   const logoSrc = currentTheme === 'dark' ? '/darklogo.png' : '/logo.png';
   document.querySelectorAll('.brand-logo, .footer-logo').forEach(img => {
