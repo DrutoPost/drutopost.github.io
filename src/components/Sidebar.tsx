@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  const logoSrc = (currentPage === 'home' && theme === 'day') ? '/logo.png' : '/darklogo.png';
+  const logoSrc = '/Horizontal_Logo_2.png';
 
   const toggleAppTheme = () => {
     const nextTheme = theme === 'day' ? 'night' : 'day';
@@ -50,10 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   return (
     <>
       {/* Mobile Header */}
-      <div className={cn(
-        "lg:hidden fixed top-0 left-0 right-0 h-20 border-b flex items-center justify-between px-6 z-50 transition-colors",
-        currentPage === 'home' && theme === 'day' ? "bg-white border-zinc-200 text-black" : "bg-black border-zinc-800 text-white"
-      )}>
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 border-b flex items-center justify-between px-6 z-50 bg-black border-zinc-800 text-white">
         <div className="flex items-center">
           <img src={logoSrc} alt="Drutopost" className="h-10 w-auto object-contain" />
         </div>
@@ -61,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
           variant="ghost"
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
-          className={cn(currentPage === 'home' && theme === 'day' ? "text-black hover:bg-black/10" : "text-white hover:bg-white/10")}
+          className="text-white hover:bg-white/10"
         >
           {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
         </Button>
@@ -81,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-8 hidden lg:flex items-center justify-center xl:justify-start">
-          <div className={cn("p-2 rounded-none transition-colors inline-block", currentPage === 'home' && theme === 'day' ? "bg-white" : "")}>
+          <div className="p-2 rounded-none inline-block">
             <img src={logoSrc} alt="Drutopost" className="h-10 w-auto object-contain lg:hidden xl:block" />
             <img src={logoSrc} alt="Drutopost" className="h-8 w-auto object-contain hidden lg:block xl:hidden" />
           </div>

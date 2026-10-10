@@ -19,6 +19,9 @@ describe('Router Fallback & Route Handling', () => {
     expect(handleRouteFallback('/CORS')).toEqual({ rewriteUrl: '/CORS/index.html', is404: false });
     expect(handleRouteFallback('/cors/')).toEqual({ rewriteUrl: '/CORS/index.html', is404: false });
     expect(handleRouteFallback('/cors/index.html')).toEqual({ rewriteUrl: '/CORS/index.html', is404: false });
+
+    expect(handleRouteFallback('/pitch.pdf')).toEqual({ rewriteUrl: '/pitch.pdf', is404: false });
+    expect(handleRouteFallback('/pitch.pdf/')).toEqual({ rewriteUrl: '/pitch.pdf', is404: false });
   });
 
   it('allows root and static assets without rewriting', () => {
