@@ -12,6 +12,8 @@ export function handleRouteFallback(rawUrl: string): { rewriteUrl: string | null
     return { rewriteUrl: '/IPA/index.html', is404: false };
   } else if (normalizedUrl === '/cors' || normalizedUrl === '/cors/' || normalizedUrl === '/cors/index.html') {
     return { rewriteUrl: '/CORS/index.html', is404: false };
+  } else if (normalizedUrl === '/pitch.pdf' || normalizedUrl === '/pitch.pdf/') {
+    return { rewriteUrl: '/pitch.pdf', is404: false };
   } else if (
     url === '/' ||
     url === '/index.html' ||
@@ -20,7 +22,7 @@ export function handleRouteFallback(rawUrl: string): { rewriteUrl: string | null
     url.startsWith('/src') ||
     url.startsWith('/node_modules') ||
     url.startsWith('/assets') ||
-    /\.(js|ts|tsx|jsx|css|json|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|mp3|webmanifest)$/i.test(url)
+    /\.(js|ts|tsx|jsx|css|json|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|mp3|webmanifest|pdf)$/i.test(url)
   ) {
     return { rewriteUrl: null, is404: false };
   } else {
